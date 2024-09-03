@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Palimpsest</title>
+    <link rel="stylesheet" href="popup.css">
+    <style>
+        body {
+            width: 300px;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+        button, input {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Palimpsest</h2>
+    <p>Number of URLs saved: <span id="urlCount">0</span></p>
+    <p>Most recent visit:</p>
+    <p id="recentUrl">No URLs visited yet</p>
+    <p>Random content:</p>
+    <div id="randomContent">N/A</div>
+    <label for="maxUrls">Maximum URLs to save:</label>
+    <input type="number" id="maxUrls" min="1" value="100">
+    <button id="saveMaxUrls">Save Max URLs</button>
+    <button id="clearButton">Clear History</button>
+    <button id="showHistoryButton">Show Full History</button>
+    <script src="popup.js"></script>
+</body>
+</html>

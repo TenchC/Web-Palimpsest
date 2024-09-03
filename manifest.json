@@ -1,0 +1,33 @@
+{
+    "manifest_version": 3,
+    "name": "Web Palimpsest",
+    "version": "0.3.0",
+    "description": "An alternate browser history.",
+    "icons": {
+        "32": "images/icon32.png",
+        "128": "images/icon128.png"
+    },
+    "action": {
+        "default_popup": "popup/popup.html"
+      },
+    "permissions": [
+        "tabs",
+        "storage",
+        "unlimitedStorage"
+    ],
+    "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "js": ["palimpsest.js"]
+        }
+      ],
+    "background": {
+  "service_worker": "palimpsest.js"
+}, 
+"web_accessible_resources": [
+    {
+      "resources": ["history/history.html"],
+      "matches": ["<all_urls>"]
+    }
+]
+}
