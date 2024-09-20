@@ -114,8 +114,8 @@ function saveData(url, content) {
         
         // Generate random position
         const position = {
-            x: Math.random() * 100, // Random value between 0 and 100 for vw
-            y: Math.random() * 100  // Random value between 0 and 100 for vh
+            x: Math.random() * 90, // Random value between 0 and 90 for vw
+            y: Math.random() * 90  // Random value between 0 and 90 for vh
         };
         
         // Add new entry with position
@@ -155,19 +155,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 // Only run this code on the history page
-if (window.location.pathname.endsWith('history.html')) {
-    function displaySavedContent(savedEntry) {
-        const contentElement = document.createElement('div');
-        contentElement.innerHTML = savedEntry.content.content;
-        contentElement.style.position = 'absolute';
-        contentElement.style.left = `${savedEntry.position.x}vw`;
-        contentElement.style.top = `${savedEntry.position.y}vh`;
-        document.body.appendChild(contentElement);
-    }
 
-    // When loading saved entries
-    chrome.storage.local.get('visitedUrls', (result) => {
-        const savedUrls = result.visitedUrls || [];
-        savedUrls.forEach(displaySavedContent);
-    });
-}

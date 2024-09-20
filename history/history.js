@@ -7,20 +7,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (urls.length === 0) {
             historyContainer.textContent = 'No URLs visited yet.';
         } else {
-            urls.forEach((entry, index) => {
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'entry';
-                let contentHtml = '';
+            urls.forEach((entry) => {
+                const contentElement = document.createElement('div');
+                contentElement.className = 'entry';
+                
                 if (entry.content.type === 'text') {
-                    contentHtml = `<p>${entry.content.content}</p>`;
+                    contentElement.innerHTML = `<p>${entry.content.content}</p>`;
                 } else if (entry.content.type === 'image') {
-                    contentHtml = `<img src="${entry.content.content}" alt="${entry.content.alt}" style="max-width: 100%; max-height: 200px;">`;
+                    contentElement.innerHTML = `<img src="${entry.content.content}" alt="${entry.content.alt}" style="max-width: 100%; max-height: 200px;">`;
                 }
-                entryDiv.innerHTML = `
-                    <p><span class="url">${index + 1}. ${entry.url}</span></p>
-                    ${contentHtml}
-                `;
-                historyContainer.appendChild(entryDiv);
+                
+                // Calculate z-index based on the entry's position in the array
+                // Newer entries (at the end of the array) will have higher z-index
+                const zIndex = urls.length - urls.indexOf(entry);
+                contentElement.style.zIndex = zIndex;
+                contentElement.style.left = `${entry.position.x}vw`;
+                contentElement.style.top = `${entry.position.y}vh`;
+                
+                document.body.appendChild(contentElement);
             });
         }
     });

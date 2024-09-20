@@ -41,12 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (showHistoryButton) {
-        showHistoryButton.addEventListener('click', () => {
-            chrome.tabs.create({ url: 'history/history.html' });
-        });
-    }
-
     if (saveMaxUrlsButton) {
         saveMaxUrlsButton.addEventListener('click', () => {
             const newMaxUrls = parseInt(maxUrlsInput.value, 10);
