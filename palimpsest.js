@@ -112,16 +112,22 @@ function saveData(url, content) {
         let urls = result.visitedUrls || [];
         const maxUrls = result.maxUrls || 100;
         
-        // Add new entry
-        urls.push({ url: trimmedUrl, content: content });
+        // Generate random position
+        const position = {
+            x: Math.random() * 100, // Random value between 0 and 100 for vw
+            y: Math.random() * 100  // Random value between 0 and 100 for vh
+        };
+        
+        // Add new entry with position
+        urls.push({ url: trimmedUrl, content: content, position: position });
         
         // If we have more than maxUrls entries, remove the oldest ones
         if (urls.length > maxUrls) {
             urls = urls.slice(-maxUrls);
         }
-        //console logging the urls
+        
         chrome.storage.local.set({ visitedUrls: urls }, () => {
-            console.log('URL and content added to storage:', trimmedUrl, content);
+            console.log('URL, content, and position added to storage:', trimmedUrl, content, position);
             if (urls.length === maxUrls) {
                 console.log(`Reached maximum of ${maxUrls} entries. Oldest entry removed.`);
             }
@@ -147,3 +153,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         saveData(message.url, message.content);
     }
 });
+
+// Only run this code on the history page
+if (window.location.pathname.endsWith('history.html')) {
+    function displaySavedContent(savedEntry) {
+        const contentElement = document.createElement('div');
+        contentElement.innerHTML = savedEntry.content.content;
+        contentElement.style.position = 'absolute';
+        contentElement.style.left = `${savedEntry.position.x}vw`;
+        contentElement.style.top = `${savedEntry.position.y}vh`;
+        document.body.appendChild(contentElement);
+    }
+
+    // When loading saved entries
+    chrome.storage.local.get('visitedUrls', (result) => {
+        const savedUrls = result.visitedUrls || [];
+        savedUrls.forEach(displaySavedContent);
+    });
+}
