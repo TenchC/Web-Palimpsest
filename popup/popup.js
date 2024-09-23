@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayUrlInfo() {
         chrome.storage.local.get(['visitedUrls', 'maxUrls'], (result) => {
             const urls = result.visitedUrls || [];
-            const maxUrls = result.maxUrls || 500;
+            const maxUrls = result.maxUrls || 100;
             
             if (urlCount) urlCount.textContent = urls.length;
             if (maxUrlsInput) maxUrlsInput.value = maxUrls;
@@ -50,15 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Trim the existing URLs if necessary
                     chrome.storage.local.get(['visitedUrls'], (result) => {
                         let urls = result.visitedUrls || [];
-                        if (urls.length > newMaxUrls) {
-                            urls = urls.slice(-newMaxUrls);
-                            chrome.storage.local.set({ visitedUrls: urls }, () => {
-                                console.log('URLs trimmed to new maximum');
-                                displayUrlInfo();
-                            });
-                        } else {
-                            displayUrlInfo();
+                        console.log('Current URLs:', urls.length);
+                        while (urls.length > newMaxUrls) {
+                            urls.shift(); // Remove the oldest URL
                         }
+                        console.log('Trimmed URLs:', urls.length);
+                        chrome.storage.local.set({ visitedUrls: urls }, () => {
+                            console.log('URLs trimmed to new maximum');
+                            displayUrlInfo();
+                        });
                     });
                 });
             } else {

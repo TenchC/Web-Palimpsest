@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const urls = result.visitedUrls || [];
         
         if (urls.length === 0) {
-            historyContainer.textContent = 'No URLs visited yet.';
+            historyContainer.textContent = 'Your palimpsest is empty.';
         } else {
             urls.forEach((entry) => {
                 const contentElement = document.createElement('div');
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Calculate z-index based on the entry's position in the array
                 // Newer entries (at the end of the array) will have higher z-index
-                const zIndex = urls.length - urls.indexOf(entry);
+                const zIndex = urls.indexOf(entry);
                 contentElement.style.zIndex = zIndex;
                 contentElement.style.left = `${entry.position.x}vw`;
                 contentElement.style.top = `${entry.position.y}vh`;

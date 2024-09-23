@@ -1,17 +1,3 @@
-//tidy the url so it's just the hostname without protocol or www
-function trimUrl(url) {
-    try {
-        const urlObject = new URL(url);
-        let hostname = urlObject.hostname;
-        // Remove 'www.' if present
-        hostname = hostname.replace(/^www\./, '');
-        return hostname;
-    } catch (e) {
-        // If URL parsing fails, attempt to remove common prefixes
-        return url.replace(/^(https?:\/\/)?(www\.)?/, '');
-    }
-}
-
 //check if element is visible
 function isElementVisible(element) {
     return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
@@ -107,7 +93,6 @@ function getRandomImage() {
 
 //save data to chrome storage
 function saveData(url, content) {
-    const trimmedUrl = trimUrl(url);
     chrome.storage.local.get(['visitedUrls', 'maxUrls'], (result) => {
         let urls = result.visitedUrls || [];
         const maxUrls = result.maxUrls || 100;
@@ -119,7 +104,7 @@ function saveData(url, content) {
         };
         
         // Add new entry with position
-        urls.push({ url: trimmedUrl, content: content, position: position });
+        urls.push({ url: url, content: content, position: position });
         
         // If we have more than maxUrls entries, remove the oldest ones
         if (urls.length > maxUrls) {
@@ -127,7 +112,7 @@ function saveData(url, content) {
         }
         
         chrome.storage.local.set({ visitedUrls: urls }, () => {
-            console.log('URL, content, and position added to storage:', trimmedUrl, content, position);
+            console.log('URL, content, and position added to storage:', url, content, position);
             if (urls.length === maxUrls) {
                 console.log(`Reached maximum of ${maxUrls} entries. Oldest entry removed.`);
             }
