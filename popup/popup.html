@@ -6,13 +6,9 @@
 </head>
 <body>
     <h2>Web Palimpsest 0.6.5</h2>
+   
     <div class="buttons-container">
-        <button id="resetButton">Clear Palimpsest</button>
-        <div id="confirmModal" class="modal">
-            <p>Are you sure you want to clear your Palimpsest?</p>
-            <button id="confirmReset">Yes</button>
-            <button id="cancelReset">Cancel</button>
-        </div>
+        <button id="displayOptionsButton">Palimpsest Display Options</button>
     </div>
     <div class="grid-container">
         <div class="grid-item">
@@ -31,6 +27,14 @@
             <h3>Artifact Save Options</h3>
             <input type="number" id="maxUrls" min="1" value="300">
             <button id="saveMaxUrls">Save Max artifacts</button>
+        </div>
+    </div>
+    <div class="buttons-container">
+        <button id="resetButton">Clear Palimpsest</button>
+        <div id="confirmModal" class="modal">
+            <p>Are you sure you want to clear your Palimpsest?</p>
+            <button id="confirmReset">Yes</button>
+            <button id="cancelReset">Cancel</button>
         </div>
     </div>
     <script src="popup.js"></script>

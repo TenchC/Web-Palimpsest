@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palimpsest Display Options</title>
+    <link rel="stylesheet" href="display_options.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Palimpsest Display Options</h1>
+        
+        <div class="options-section">
+            <h2>Customize Your Palimpsest View</h2>
+            <div class="option">
+                <label for="backgroundColor">Background Color:</label>
+                <input type="color" id="backgroundColor" value="#FFFFFF">
+            </div>
+            <div class="option">
+                <label for="backgroundOpacity">Background Opacity:</label>
+                <input type="range" id="backgroundOpacity" min="0" max="1" step="0.1" value="1">
+                <span id="opacityValue">1</span>
+            </div>
+            <div class="option">
+                <label for="textColor">Text Color:</label>
+                <input type="color" id="textColor" value="#000000">
+            </div>
+            <div class="option">
+                <label for="fontSize">Font Size:</label>
+                <input type="number" id="fontSize" min="8" max="24" value="14"> px
+            </div>
+            <div class="option">
+                <label for="urlColor">URL Color:</label>
+                <input type="color" id="urlColor" value="#FF0000">
+            </div>
+            <div class="option">
+                <label for="urlBackgroundColor">URL Background Color:</label>
+                <input type="color" id="urlBackgroundColor" value="#FFFFFF">
+            </div>
+        </div>
+
+        <button id="saveOptions">Save Options</button>
+
+        <h2>Example Entries</h2>
+        <div class="example-entries">
+            <div class="entry" id="textEntry">
+                <a href="#" class="entry-url">example.com</a>
+                <div class="entry-content">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
+            </div>
+            <div class="entry" id="imageEntry">
+                <a href="#" class="entry-url">image-example.com</a>
+                <div class="entry-content">
+                    <img src="../images/example-image.jpg" alt="Example Image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="display_options.js"></script>
+</body>
+</html>

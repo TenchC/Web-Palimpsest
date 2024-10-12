@@ -47,7 +47,6 @@ h2 {
 }
 
 .buttons-container {
-    margin-bottom: 10px;
     width: auto;
     text-align: center;
 }
@@ -71,4 +70,15 @@ h2 {
 
 .modal button {
     margin: 0 5px;
+}
+
+#displayOptionsButton {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+#resetButton{
+    width: 100%;
+    padding: 5px;
 }

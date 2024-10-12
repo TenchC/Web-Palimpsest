@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmModal = document.getElementById('confirmModal');
     const confirmResetButton = document.getElementById('confirmReset');
     const cancelResetButton = document.getElementById('cancelReset');
+    const displayOptionsButton = document.getElementById('displayOptionsButton');
 
     function tidyUrl(url) {
         try {
@@ -111,6 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cancelResetButton.addEventListener('click', () => {
         confirmModal.style.display = 'none';
+    });
+
+    displayOptionsButton.addEventListener('click', () => {
+        chrome.tabs.create({ url: 'display_options/display_options.html' });
     });
 
     displayUrlInfo();

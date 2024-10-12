@@ -1,0 +1,122 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+label {
+    display: inline-block;
+    width: 150px;
+}
+
+input[type="range"], input[type="color"], input[type="number"] {
+    width: 100px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.options-section {
+    margin-bottom: 20px;
+}
+
+.option {
+    margin-bottom: 10px;
+}
+
+.example-entries {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    min-height: 200px;
+    position: relative;
+}
+
+.entry {
+    margin: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-width: 45%;
+    word-wrap: break-word;
+    position: relative;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+#textEntry {
+    flex: 1; /* This will make the text entry take up remaining space */
+}
+
+#imageEntry {
+    flex: 0 0 auto; /* This will make the image entry size to its content */
+}
+
+.entry-url {
+    color: var(--url-color);
+    background-color: var(--url-background-color);
+    font-size: 12px;
+    margin-bottom: 5px;
+    padding: 5px;
+    border-bottom: 1px dashed black;
+    display: none;
+    text-decoration: none;
+    text-align: center;
+    width: auto;
+}
+
+.entry-content {
+    width: auto;
+    max-width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.entry-content img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
+}
+
+.entry:hover {
+    z-index: 9999 !important;
+    transform: scale(1.2);
+    border: 1px solid black;
+}
+
+.entry:hover .entry-url {
+    display: block;
+}
+
+/* Remove individual positioning for entries */
+#textEntry, #imageEntry {
+    position: static;
+}

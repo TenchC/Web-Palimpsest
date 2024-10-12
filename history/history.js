@@ -25,6 +25,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Function to apply display options
+    function applyDisplayOptions(options) {
+        document.documentElement.style.setProperty('--hover-background-color', options.backgroundColor);
+        document.documentElement.style.setProperty('--url-color', options.urlColor);
+        document.documentElement.style.setProperty('--url-background-color', options.urlBackgroundColor);
+        document.body.style.color = options.textColor;
+        document.body.style.fontSize = `${options.fontSize}px`;
+
+        const entries = document.querySelectorAll('.entry');
+        entries.forEach(entry => {
+            entry.style.color = options.textColor;
+            entry.style.fontSize = `${options.fontSize}px`;
+            const urlElement = entry.querySelector('.entry-url');
+            if (urlElement) {
+                urlElement.style.color = options.urlColor;
+                urlElement.style.backgroundColor = options.urlBackgroundColor;
+            }
+        });
+    }
+
+    // Load display options and apply them
+    function loadAndApplyOptions() {
+        chrome.storage.local.get(['backgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor'], function(items) {
+            const options = {
+                backgroundColor: items.backgroundColor || 'rgba(255, 255, 255, 1)',
+                textColor: items.textColor || '#000000',
+                fontSize: items.fontSize || 14,
+                urlColor: items.urlColor || '#FF0000',
+                urlBackgroundColor: items.urlBackgroundColor || '#FFFFFF'
+            };
+            applyDisplayOptions(options);
+        });
+    }
+
+    // Initial load of options
+    loadAndApplyOptions();
+
     chrome.storage.local.get(['visitedUrls'], (result) => {
         const urls = result.visitedUrls || [];
         
@@ -34,16 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
             urls.forEach((entry, index) => {
                 const contentElement = document.createElement('div');
                 contentElement.className = 'entry';
-                
-                // Add margins and adjust sizing
-                contentElement.style.margin = '10px';
-                contentElement.style.padding = '10px';
-                contentElement.style.boxSizing = 'border-box';
-                contentElement.style.overflow = 'auto';
-                contentElement.style.maxWidth = '80vw';
-                contentElement.style.maxHeight = '80vh';
-                contentElement.style.wordWrap = 'break-word';
-                contentElement.style.position = 'absolute';
                 
                 // Add URL text element (initially hidden)
                 const urlElement = document.createElement('a');
@@ -80,12 +107,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     contentElement.classList.add('entry-hover');
                 });
                 
-                contentElement.addEventListener('mouseleave', () => {
-                    contentElement.classList.remove('entry-hover');
+                // contentElement.addEventListener('mouseleave', () => {
+                //     contentElement.classList.remove('entry-hover');
+                // });
+                
+                // Apply display options to the new element
+                chrome.storage.local.get(['backgroundOpacity', 'textColor', 'fontSize'], function(items) {
+                    contentElement.style.backgroundColor = `rgba(255, 255, 255, ${items.backgroundOpacity || 0.5})`;
+                    contentElement.style.color = items.textColor || '#000000';
+                    contentElement.style.fontSize = `${items.fontSize || 14}px`;
                 });
                 
                 document.body.appendChild(contentElement);
             });
+        }
+    });
+
+    // Listen for changes in storage and reapply styles
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+        if (namespace === 'local') {
+            loadAndApplyOptions();
         }
     });
 });
