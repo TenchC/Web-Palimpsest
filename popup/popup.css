@@ -1,0 +1,74 @@
+body {
+    width: 300px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+}
+
+button, input {
+    margin-top: 10px;
+}
+
+h2 {
+    margin: 5px;
+    text-align: center;
+}
+
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.grid-item {
+    flex-basis: calc(50% - 5px);
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    width: calc(50% - 5px);
+}
+
+.grid-item h3 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.2;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.grid-item p {
+    margin: 0;
+    font-size: 12px;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.buttons-container {
+    margin-bottom: 10px;
+    width: auto;
+    text-align: center;
+}
+
+#maxUrls {
+    width: 95%;
+}
+
+.modal {
+    display: none;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.modal p {
+    margin: 0 0 10px 0;
+}
+
+.modal button {
+    margin: 0 5px;
+}

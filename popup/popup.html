@@ -3,28 +3,36 @@
 <head>
     <title>Palimpsest</title>
     <link rel="stylesheet" href="popup.css">
-    <style>
-        body {
-            width: 300px;
-            padding: 10px;
-            font-family: Arial, sans-serif;
-        }
-        button, input {
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
-    <h2>Palimpsest 0.6.5</h2>
-    <p>Number of URLs saved: <span id="urlCount">0</span></p>
-    <p>Most recent visit:</p>
-    <p id="recentUrl">No URLs visited yet</p>
-    <p>Random content:</p>
-    <div id="randomContent">N/A</div>
-    <label for="maxUrls">Maximum URLs to save:</label>
-    <input type="number" id="maxUrls" min="1" value="500">
-    <button id="saveMaxUrls">Save Max URLs</button>
-    <button id="clearButton">Clear History</button>
+    <h2>Web Palimpsest 0.6.5</h2>
+    <div class="buttons-container">
+        <button id="resetButton">Clear Palimpsest</button>
+        <div id="confirmModal" class="modal">
+            <p>Are you sure you want to clear your Palimpsest?</p>
+            <button id="confirmReset">Yes</button>
+            <button id="cancelReset">Cancel</button>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="grid-item">
+            <h3>Artifacts Saved</h3>
+            <p id="urlCount">0</p>
+        </div>
+        <div class="grid-item">
+            <h3>Most Recent Visit</h3>
+            <p id="recentUrl">No websites visited yet</p>
+        </div>
+        <div class="grid-item">
+            <h3>Most Recent Artifact</h3>
+            <div id="randomContent">N/A</div>
+        </div>
+        <div class="grid-item">
+            <h3>Artifact Save Options</h3>
+            <input type="number" id="maxUrls" min="1" value="300">
+            <button id="saveMaxUrls">Save Max artifacts</button>
+        </div>
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>

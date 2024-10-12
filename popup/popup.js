@@ -6,6 +6,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const showHistoryButton = document.getElementById('showHistoryButton');
     const maxUrlsInput = document.getElementById('maxUrls');
     const saveMaxUrlsButton = document.getElementById('saveMaxUrls');
+    const resetButton = document.getElementById('resetButton');
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmResetButton = document.getElementById('confirmReset');
+    const cancelResetButton = document.getElementById('cancelReset');
+
+    function tidyUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            let domain = urlObj.hostname;
+            
+            // Remove 'www.' if present
+            if (domain.startsWith('www.')) {
+                domain = domain.slice(4);
+            }
+            
+            // Split the domain and keep only the last two parts (or one if it's a top-level domain)
+            const parts = domain.split('.');
+            if (parts.length > 2) {
+                domain = parts.slice(-2).join('.');
+            }
+            
+            return domain;
+        } catch (e) {
+            // If URL parsing fails, return the original URL
+            return url;
+        }
+    }
 
     function displayUrlInfo() {
         chrome.storage.local.get(['visitedUrls', 'maxUrls'], (result) => {
@@ -17,7 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (urls.length > 0) {
                 const lastVisit = urls[urls.length - 1];
-                if (recentUrl) recentUrl.textContent = lastVisit.url;
+                if (recentUrl) {
+                    const trimmedUrl = tidyUrl(lastVisit.url);
+                    recentUrl.innerHTML = `<span>${trimmedUrl}</span>`;
+                }
                 if (randomContent) {
                     if (lastVisit.content.type === 'text') {
                         randomContent.textContent = lastVisit.content.content;
@@ -66,6 +96,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    resetButton.addEventListener('click', () => {
+        confirmModal.style.display = 'block';
+    });
+
+    confirmResetButton.addEventListener('click', () => {
+        chrome.storage.local.set({ visitedUrls: [] }, () => {
+            console.log('URLs cleared');
+            displayUrlInfo();
+            confirmModal.style.display = 'none';
+        });
+    });
+
+    cancelResetButton.addEventListener('click', () => {
+        confirmModal.style.display = 'none';
+    });
 
     displayUrlInfo();
 });
