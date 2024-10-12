@@ -10,13 +10,6 @@ body {
     bottom:0;
     overflow:hidden;
 }
-.entry {
-    max-width: 10vw;
-    max-height: 10vh;
-    position: absolute;
-    transition: all 1s ease-in-out;
-
-}
 
 h1 {
     text-align: center;
@@ -34,4 +27,59 @@ h1 {
     background-color: rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     box-shadow: 0 0 8px 8px rgb(255, 255, 255) inset;
+}
+
+p {
+    margin: 0px;
+}
+
+.entry {
+    margin: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+    max-width: 80vw;
+    max-height: 80vh;
+    word-wrap: break-word;
+    position: absolute;
+    transition: all 0.3s ease;
+}
+
+.entry-url {
+    color: red;
+    font-size: 12px;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed black;
+    display: none;
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+}
+
+.entry-content {
+    width: auto;
+    max-width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.entry-content img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
+}
+
+.entry-hover {
+    z-index: 9999 !important;
+    background-color: white;
+    transform: scale(1.2);
+    border: 1px solid black;
+}
+
+.entry-hover .entry-url {
+    display: block;
 }

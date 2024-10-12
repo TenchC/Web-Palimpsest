@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayUrlInfo() {
         chrome.storage.local.get(['visitedUrls', 'maxUrls'], (result) => {
             const urls = result.visitedUrls || [];
-            const maxUrls = result.maxUrls || 100;
+            const maxUrls = result.maxUrls || 300;
             
             if (urlCount) urlCount.textContent = urls.length;
             if (maxUrlsInput) maxUrlsInput.value = maxUrls;

@@ -1,6 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const historyContainer = document.getElementById('historyContainer');
 
+    // Function to clean and tidy URLs
+    function tidyUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            let domain = urlObj.hostname;
+            
+            // Remove 'www.' if present
+            if (domain.startsWith('www.')) {
+                domain = domain.slice(4);
+            }
+            
+            // Split the domain and keep only the last two parts (or one if it's a top-level domain)
+            const parts = domain.split('.');
+            if (parts.length > 2) {
+                domain = parts.slice(-2).join('.');
+            }
+            
+            return domain;
+        } catch (e) {
+            // If URL parsing fails, return the original URL
+            return url;
+        }
+    }
+
     chrome.storage.local.get(['visitedUrls'], (result) => {
         const urls = result.visitedUrls || [];
         
@@ -21,27 +45,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 contentElement.style.wordWrap = 'break-word';
                 contentElement.style.position = 'absolute';
                 
+                // Add URL text element (initially hidden)
+                const urlElement = document.createElement('a');
+                urlElement.href = entry.url;
+                urlElement.textContent = tidyUrl(entry.url);
+                urlElement.className = 'entry-url';
+                urlElement.target = '_blank'; // Open link in new tab
+                contentElement.appendChild(urlElement);
+                
+                // Create a wrapper for the content
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'entry-content';
+                
                 if (entry.content.type === 'text') {
-                    contentElement.style.width = '200px'; // Fixed width for text entries
-                    contentElement.innerHTML = `<p style="margin: 0;">${entry.content.content}</p>`;
+                    contentWrapper.innerHTML = `<p>${entry.content.content}</p>`;
                 } else if (entry.content.type === 'image') {
-                    contentElement.style.width = 'auto'; // Allow width to adjust for images
-                    contentElement.style.maxWidth = '200px'; // Maximum width for images
-                    contentElement.innerHTML = `<img src="${entry.content.content}" alt="${entry.content.alt}" style="width: 100%; height: auto; max-height: 100px; object-fit: contain;">`;
+                    contentWrapper.innerHTML = `<img src="${entry.content.content}" alt="${entry.content.alt}">`;
                 }
                 
-                // Add URL text element (initially hidden)
-                const urlElement = document.createElement('div');
-                urlElement.textContent = entry.url;
-                urlElement.style.color = 'red';
-                urlElement.style.position = 'absolute';
-                urlElement.style.bottom = '0';
-                urlElement.style.left = '0';
-                urlElement.style.right = '0';
-                urlElement.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-                urlElement.style.padding = '5px';
-                urlElement.style.display = 'none';
-                contentElement.appendChild(urlElement);
+                contentElement.appendChild(contentWrapper);
                 
                 // Calculate position within viewport
                 const maxX = 95; // 95vw to leave some margin
@@ -52,23 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 contentElement.style.left = `${x}vw`;
                 contentElement.style.top = `${y}vh`;
                 contentElement.style.zIndex = index;
-                contentElement.style.transition = 'all 0.3s ease';
                 
                 // Add hover effects
                 contentElement.addEventListener('mouseenter', () => {
-                    contentElement.style.zIndex = urls.length; // Bring to front
-                    contentElement.style.backgroundColor = 'white'; // White background
-                    contentElement.style.transform = 'scale(1.2)'; // 20% larger
-                    contentElement.style.border = '1px solid black'; // Add black border
-                    urlElement.style.display = 'block'; // Show URL text
+                    contentElement.classList.add('entry-hover');
                 });
                 
                 contentElement.addEventListener('mouseleave', () => {
-                    contentElement.style.zIndex = index; // Restore original z-index
-                    contentElement.style.backgroundColor = ''; // Remove white background
-                    contentElement.style.transform = 'scale(1)'; // Return to original size
-                    contentElement.style.border = 'none'; // Remove border
-                    urlElement.style.display = 'none'; // Hide URL text
+                    contentElement.classList.remove('entry-hover');
                 });
                 
                 document.body.appendChild(contentElement);
