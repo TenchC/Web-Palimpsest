@@ -67,7 +67,7 @@ button:hover {
     transition: all 0.3s ease;
     background-color: transparent;
     border: 1px solid transparent;
-    border-radius: var(--entry-border-radius);
+    border-radius: var(--entry-border-radius) var(--entry-border-radius);
 }
 
 #textEntry {
@@ -121,8 +121,4 @@ button:hover {
 /* Remove individual positioning for entries */
 #textEntry, #imageEntry {
     position: static;
-}
-
-:root {
-    --entry-border-radius: 0px;
 }

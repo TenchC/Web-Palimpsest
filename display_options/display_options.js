@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const fontSizeValueSpan = document.getElementById('fontSizeValue');
     
     const exampleEntries = document.querySelectorAll('.entry');
-    const exampleUrls = document.querySelectorAll('.entry-url');
     
     function updateOpacityValue() {
         opacityValueSpan.textContent = backgroundOpacityInput.value;
@@ -40,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.setProperty('--url-background-color', urlBackgroundColor);
         document.documentElement.style.setProperty('--entry-border-radius', `${entryBorderRadius}px`);
 
+        // Update  View Entries
         exampleEntries.forEach(entry => {
             entry.style.color = textColor;
             entry.style.fontSize = `${fontSize}px`;
@@ -50,27 +50,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        exampleUrls.forEach(url => {
-            url.style.color = urlColor;
-            url.style.backgroundColor = urlBackgroundColor;
-        });
-
-        // Add hover effect to example entries
-        exampleEntries.forEach(entry => {
-            entry.addEventListener('mouseenter', () => {
-                entry.style.backgroundColor = backgroundColor;
-                const urlElement = entry.querySelector('.entry-url');
-                if (urlElement) {
-                    urlElement.style.display = 'block';
-                }
-            });
-            entry.addEventListener('mouseleave', () => {
-                entry.style.backgroundColor = 'transparent';
-                const urlElement = entry.querySelector('.entry-url');
-                if (urlElement) {
-                    urlElement.style.display = 'none';
-                }
-            });
+        // Update URLs for View
+        exampleEntries.forEach(url => {
+            const urlElement = url.querySelector('.entry-url');
+            if (urlElement) {
+                urlElement.style.color = urlColor;
+                urlElement.style.backgroundColor = urlBackgroundColor;
+            }
         });
     }
 
