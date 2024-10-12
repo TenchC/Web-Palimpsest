@@ -27,7 +27,9 @@
             </div>
             <div class="option">
                 <label for="fontSize">Font Size:</label>
-                <input type="number" id="fontSize" min="8" max="24" value="14"> px
+                <input type="range" id="fontSize" min="6" max="26" value="14">
+                <span id="fontSizeValue">14</span>px
+               
             </div>
             <div class="option">
                 <label for="urlColor">URL Color:</label>
@@ -36,6 +38,11 @@
             <div class="option">
                 <label for="urlBackgroundColor">URL Background Color:</label>
                 <input type="color" id="urlBackgroundColor" value="#FFFFFF">
+            </div>
+            <div class="option">
+                <label for="entryBorderRadius">Entry Border Rounding:</label>
+                <input type="range" id="entryBorderRadius" min="0" max="20" step="1" value="0">
+                <span id="borderRadiusValue">0</span>px
             </div>
         </div>
 

@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const fontSizeInput = document.getElementById('fontSize');
     const urlColorInput = document.getElementById('urlColor');
     const urlBackgroundColorInput = document.getElementById('urlBackgroundColor');
+    const entryBorderRadiusInput = document.getElementById('entryBorderRadius');
+    const borderRadiusValueSpan = document.getElementById('borderRadiusValue');
+    const fontSizeValueSpan = document.getElementById('fontSizeValue');
     
     const exampleEntries = document.querySelectorAll('.entry');
     const exampleUrls = document.querySelectorAll('.entry-url');
@@ -30,14 +33,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const fontSize = fontSizeInput.value;
         const urlColor = urlColorInput.value;
         const urlBackgroundColor = urlBackgroundColorInput.value;
+        const entryBorderRadius = entryBorderRadiusInput.value;
 
         document.documentElement.style.setProperty('--hover-background-color', backgroundColor);
         document.documentElement.style.setProperty('--url-color', urlColor);
         document.documentElement.style.setProperty('--url-background-color', urlBackgroundColor);
+        document.documentElement.style.setProperty('--entry-border-radius', `${entryBorderRadius}px`);
 
         exampleEntries.forEach(entry => {
             entry.style.color = textColor;
             entry.style.fontSize = `${fontSize}px`;
+            entry.style.borderRadius = `${entryBorderRadius}px`;
             const contentElement = entry.querySelector('.entry-content');
             if (contentElement) {
                 contentElement.style.backgroundColor = backgroundColor;
@@ -68,11 +74,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function updateBorderRadiusValue() {
+        borderRadiusValueSpan.textContent = entryBorderRadiusInput.value;
+    }
+
+    function updateFontSizeValue() {
+        fontSizeValueSpan.textContent = fontSizeInput.value;
+    }
+
     [backgroundColorInput, backgroundOpacityInput, textColorInput, fontSizeInput, urlColorInput, urlBackgroundColorInput].forEach(input => {
         input.addEventListener('input', () => {
             updateExampleEntries();
             updateOpacityValue();
         });
+    });
+
+    entryBorderRadiusInput.addEventListener('input', () => {
+        updateExampleEntries();
+        updateBorderRadiusValue();
+    });
+
+    fontSizeInput.addEventListener('input', () => {
+        updateExampleEntries();
+        updateFontSizeValue();
     });
 
     saveButton.addEventListener('click', function() {
@@ -83,13 +107,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const fontSize = fontSizeInput.value;
         const urlColor = urlColorInput.value;
         const urlBackgroundColor = urlBackgroundColorInput.value;
+        const entryBorderRadius = entryBorderRadiusInput.value;
 
         const options = {
             backgroundColor: backgroundColor,
             textColor: textColor,
             fontSize: parseInt(fontSize),
             urlColor: urlColor,
-            urlBackgroundColor: urlBackgroundColor
+            urlBackgroundColor: urlBackgroundColor,
+            entryBorderRadius: parseInt(entryBorderRadius)
         };
 
         chrome.storage.local.set(options, function() {
@@ -98,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Load saved options when the page loads
-    chrome.storage.local.get(['backgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor'], function(items) {
+    chrome.storage.local.get(['backgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor', 'entryBorderRadius'], function(items) {
         if (items.backgroundColor) {
             const match = items.backgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/);
             if (match) {
@@ -112,6 +138,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (items.fontSize) fontSizeInput.value = items.fontSize;
         if (items.urlColor) urlColorInput.value = items.urlColor;
         if (items.urlBackgroundColor) urlBackgroundColorInput.value = items.urlBackgroundColor;
+        if (items.entryBorderRadius) {
+            entryBorderRadiusInput.value = items.entryBorderRadius;
+            updateBorderRadiusValue();
+        }
 
         updateExampleEntries();
     });

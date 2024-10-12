@@ -32,28 +32,32 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.style.setProperty('--url-background-color', options.urlBackgroundColor);
         document.body.style.color = options.textColor;
         document.body.style.fontSize = `${options.fontSize}px`;
+        document.documentElement.style.setProperty('--entry-border-radius', `${options.entryBorderRadius}px`);
 
         const entries = document.querySelectorAll('.entry');
         entries.forEach(entry => {
             entry.style.color = options.textColor;
             entry.style.fontSize = `${options.fontSize}px`;
+            entry.style.borderRadius = `${options.entryBorderRadius}px`;
             const urlElement = entry.querySelector('.entry-url');
             if (urlElement) {
                 urlElement.style.color = options.urlColor;
                 urlElement.style.backgroundColor = options.urlBackgroundColor;
+                urlElement.style.borderRadius = `${options.entryBorderRadius}px ${options.entryBorderRadius}px 0 0`;
             }
         });
     }
 
     // Load display options and apply them
     function loadAndApplyOptions() {
-        chrome.storage.local.get(['backgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor'], function(items) {
+        chrome.storage.local.get(['backgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor', 'entryBorderRadius'], function(items) {
             const options = {
                 backgroundColor: items.backgroundColor || 'rgba(255, 255, 255, 1)',
                 textColor: items.textColor || '#000000',
                 fontSize: items.fontSize || 14,
                 urlColor: items.urlColor || '#FF0000',
-                urlBackgroundColor: items.urlBackgroundColor || '#FFFFFF'
+                urlBackgroundColor: items.urlBackgroundColor || '#FFFFFF',
+                entryBorderRadius: items.entryBorderRadius || 0
             };
             applyDisplayOptions(options);
         });
@@ -107,15 +111,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     contentElement.classList.add('entry-hover');
                 });
                 
-                // contentElement.addEventListener('mouseleave', () => {
-                //     contentElement.classList.remove('entry-hover');
-                // });
+                contentElement.addEventListener('mouseleave', () => {
+                    contentElement.classList.remove('entry-hover');
+                });
                 
                 // Apply display options to the new element
-                chrome.storage.local.get(['backgroundOpacity', 'textColor', 'fontSize'], function(items) {
+                chrome.storage.local.get(['backgroundOpacity', 'textColor', 'fontSize', 'entryBorderRadius'], function(items) {
                     contentElement.style.backgroundColor = `rgba(255, 255, 255, ${items.backgroundOpacity || 0.5})`;
                     contentElement.style.color = items.textColor || '#000000';
                     contentElement.style.fontSize = `${items.fontSize || 14}px`;
+                    contentElement.style.borderRadius = `${items.entryBorderRadius || 0}px`;
+                    const urlElement = contentElement.querySelector('.entry-url');
+                    if (urlElement) {
+                        urlElement.style.borderRadius = `${items.entryBorderRadius || 0}px ${items.entryBorderRadius || 0}px 0 0`;
+                    }
                 });
                 
                 document.body.appendChild(contentElement);
