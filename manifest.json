@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Web Palimpsest",
-    "version": "0.5.0",
+    "version": "0.6.5",
     "description": "An alternate browser history.",
     "icons": {
         "32": "images/icon32.png",
