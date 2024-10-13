@@ -8,55 +8,84 @@
 </head>
 <body>
     <div class="container">
-        <h1>Palimpsest Display Options</h1>
+        <div class="header">
+            <h1>Palimpsest Display Options</h1>
+            <button id="saveOptions">Save Options</button>
+        </div>
         
         <div class="options-section">
-            <h2>Customize Your Palimpsest View</h2>
-            <div class="option">
-                <label for="backgroundColor">Background Color:</label>
-                <input type="color" id="backgroundColor" value="#FFFFFF">
-            </div>
-            <div class="option">
-                <label for="backgroundOpacity">Background Opacity:</label>
-                <input type="range" id="backgroundOpacity" min="0" max="1" step="0.1" value="1">
-                <span id="opacityValue">1</span>
-            </div>
-            <div class="option">
-                <label for="textColor">Text Color:</label>
-                <input type="color" id="textColor" value="#000000">
-            </div>
-            <div class="option">
-                <label for="fontSize">Font Size:</label>
-                <input type="range" id="fontSize" min="6" max="26" value="14"> <span id="fontSizeValue">14</span>px
-               
-            </div>
-            <div class="option">
-                <label for="urlColor">URL Color:</label>
-                <input type="color" id="urlColor" value="#FF0000">
-            </div>
-            <div class="option">
-                <label for="urlBackgroundColor">URL Background Color:</label>
-                <input type="color" id="urlBackgroundColor" value="#FFFFFF">
-            </div>
-            <div class="option">
-                <label for="entryBorderRadius">Entry Border Rounding:</label>
-                <input type="range" id="entryBorderRadius" min="0" max="20" step="1" value="0">
-                <span id="borderRadiusValue">0</span>px
+            <div class="options-columns">
+                <div class="options-column">
+                    <h3>Entry Options</h3>
+                    <div class="option">
+                        <label for="entryBackgroundColor">Entry Background Color:</label>
+                        <input type="color" id="entryBackgroundColor" value="#FFFFFF">
+                    </div>
+                    <div class="option">
+                        <label for="backgroundOpacity">Entry Background Opacity: <span id="opacityValue">1</span></label>
+                        <input type="range" id="backgroundOpacity" min="0" max="1" step="0.1" value="1">
+                    </div>
+                    <div class="option">
+                        <label for="textColor">Text Color:</label>
+                        <input type="color" id="textColor" value="#000000">
+                    </div>
+                    <div class="option">
+                        <label for="fontSize">Font Size: <span id="fontSizeValue">14</span>px</label>
+                        <input type="range" id="fontSize" min="6" max="26" value="14">
+                    </div>
+                    <div class="option">
+                        <label for="entryBorderRadius">Entry Border Rounding: <span id="borderRadiusValue">0</span>px</label>
+                        <input type="range" id="entryBorderRadius" min="0" max="20" step="1" value="0">
+                    </div>
+                </div>
+                
+                <div class="options-column">
+                    <h3>Entry Header Options</h3>
+                    <div class="option">
+                        <label for="urlColor">URL Color:</label>
+                        <input type="color" id="urlColor" value="#FF0000">
+                    </div>
+                    <div class="option">
+                        <label for="urlBackgroundColor">URL Background Color:</label>
+                        <input type="color" id="urlBackgroundColor" value="#FFFFFF">
+                    </div>
+                    <div class="option">
+                        <label for="displayEntryNumber">Display Entry Number:</label>
+                        <label class="switch">
+                            <input type="checkbox" id="displayEntryNumber">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="options-column">
+                    <h3>Page Options</h3>
+                    <div class="option">
+                        <label for="pageBackgroundColor">Page Background Color:</label>
+                        <input type="color" id="pageBackgroundColor" value="#FFFFFF">
+                    </div>
+                    <div class="option">
+                        <label for="layerOrder">Layer Order:</label>
+                        <select id="layerOrder">
+                            <option value="oldestOnTop">Oldest on top</option>
+                            <option value="newestOnTop">Newest on top</option>
+                            <option value="random">Random</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <button id="saveOptions">Save Options</button>
 
         <h2>Example Entries</h2>
         <div class="example-entries">
             <div class="entry" id="textEntry">
-                <a href="#" class="entry-url">example.com</a>
+                <a href="#" class="entry-url">example-1.com</a>
                 <div class="entry-content">
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                 </div>
             </div>
             <div class="entry" id="imageEntry">
-                <a href="#" class="entry-url">image-example.com</a>
+                <a href="#" class="entry-url">example-2.com</a>
                 <div class="entry-content">
                     <img src="../images/example-image.jpg" alt="Example Image">
                 </div>
