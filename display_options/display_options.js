@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const displayEntryNumberInput = document.getElementById('displayEntryNumber');
     const artifactWeightInput = document.getElementById('artifactWeight');
     const weightRatioSpan = document.getElementById('weightRatio');
+    console.log(weightRatioSpan);
     
     // Function to update opacity value display
     function updateOpacityValue() {

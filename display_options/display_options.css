@@ -335,7 +335,7 @@ input:checked + .slider
     margin-top: 10px;
 }
 
-#weightRatio {
-    font-weight: bold;
+.weight-data {
+    font-weight: bold !important;
     margin-left: 5px;
 }
