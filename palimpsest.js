@@ -4,39 +4,35 @@ function isElementVisible(element) {
 }
 
 function getRandomContent() {
-    const isText = Math.random() < 0.5;
-    let content;
+    return new Promise((resolve) => {
+        chrome.storage.local.get(['artifactWeight'], (result) => {
+            const artifactWeight = result.artifactWeight !== undefined ? result.artifactWeight : 50;
+            const imageThreshold = (100 - artifactWeight) / 100;
+            
+            if (Math.random() < imageThreshold) {
+                content = getRandomImage();
+                if (content.content === "No suitable image found on this page.") {
+                    content = getRandomText();
+                }
+            } else {
+                content = getRandomText();
+                if (content.content === "No suitable text found on this page.") {
+                    content = getRandomImage();
+                }
+            }
 
-    //if isText is true, run getRandomText
-    if (isText) {
-        content = getRandomText();
-        if (content.content === "No suitable text found on this page.") {
-            //if there's no text, run getRandomImage
-            content = getRandomImage();
-        }
-
-    } else {
-        content = getRandomImage();
-        if (content.content === "No suitable image found on this page.") {
-            //if there's no image, run getRandomText
-            content = getRandomText();
-        }
-    }
-
-    // If no suitable content is found, return null
-    if (content.content === "No suitable text found on this page." || 
-        content.content === "No suitable image found on this page.") {
-        return null;
-    }
-
-    // Add red border to the selected content
-    if (content.type === 'text' && content.element) {
-        content.element.style.border = '2px solid red';
-    } else if (content.type === 'image' && content.element) {
-        content.element.style.border = '2px solid red';
-    }
-
-    return content;
+            if (content.content === "No suitable text found on this page." || 
+                content.content === "No suitable image found on this page.") {
+                resolve(null);
+            } else {
+                // Add red border to the selected content
+                if (content.element) {
+                    content.element.style.border = '2px solid red';
+                }
+                resolve(content);
+            }
+        });
+    });
 }
 
 //get random text
@@ -99,8 +95,8 @@ function saveData(url, content) {
         
         // Generate random position
         const position = {
-            x: Math.random() * 90, // Random value between 0 and 90 for vw
-            y: Math.random() * 90  // Random value between 0 and 90 for vh
+            x: Math.random() * 90,
+            y: Math.random() * 90
         };
         
         // Add new entry with position
@@ -123,12 +119,13 @@ function saveData(url, content) {
 // Content script functionality
 if (typeof window !== 'undefined') {
     window.addEventListener('load', () => {
-        const randomContent = getRandomContent();
-        if (randomContent !== null) {
-            chrome.runtime.sendMessage({ action: "saveData", url: window.location.href, content: randomContent });
-        } else {
-            console.log('No suitable content found. URL not saved.');
-        }
+        getRandomContent().then(randomContent => {
+            if (randomContent !== null) {
+                chrome.runtime.sendMessage({ action: "saveData", url: window.location.href, content: randomContent });
+            } else {
+                console.log('No suitable content found. URL not saved.');
+            }
+        });
     });
 }
 
@@ -138,6 +135,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         saveData(message.url, message.content);
     }
 });
-
-// Only run this code on the history page
-

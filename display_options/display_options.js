@@ -12,10 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const borderRadiusValueSpan = document.getElementById('borderRadiusValue');
     const fontSizeValueSpan = document.getElementById('fontSizeValue');
     const pageBackgroundColorInput = document.getElementById('pageBackgroundColor');
-    const exampleEntries = document.querySelectorAll('.entry');
     const exampleEntriesDiv = document.querySelector('.example-entries');
     const layerOrderSelect = document.getElementById('layerOrder');
     const displayEntryNumberInput = document.getElementById('displayEntryNumber');
+    const artifactWeightInput = document.getElementById('artifactWeight');
+    const weightRatioSpan = document.getElementById('weightRatio');
     
     // Function to update opacity value display
     function updateOpacityValue() {
@@ -54,23 +55,26 @@ document.addEventListener('DOMContentLoaded', function() {
         document.documentElement.style.setProperty('--entry-border-radius', `${entryBorderRadius}px`);
 
         // Update example entries
-        exampleEntries.forEach((entry, index) => {
+        const entries = document.querySelectorAll('.entry');
+        entries.forEach((entry, index) => {
             entry.style.color = textColor;
             entry.style.fontSize = `${fontSize}px`;
             entry.style.borderRadius = `${entryBorderRadius}px`;
-            const contentElement = entry.querySelector('.entry-content');
-            if (contentElement) {
-                contentElement.style.backgroundColor = entryBackgroundColor;
-            }
+            
             const urlElement = entry.querySelector('.entry-url');
             if (urlElement) {
-                urlElement.style.color = urlColor;
-                urlElement.style.backgroundColor = urlBackgroundColor;
+                // Get the base URL text (without entry number)
+                let baseUrlText = urlElement.textContent.split(' - ')[0];
+                
+                let newUrlHtml = `<a href="#" class="entry-url" style="color: ${urlColor}; background-color: ${urlBackgroundColor};">`;
                 if (displayEntryNumber) {
-                    urlElement.textContent = `${urlElement.textContent} - Entry ${index + 1}`;
+                    newUrlHtml += `${baseUrlText} - Entry ${index + 1}`;
                 } else {
-                    urlElement.textContent = urlElement.textContent.split(' - ')[0];
+                    newUrlHtml += baseUrlText;
                 }
+                newUrlHtml += '</a>';
+                
+                entry.innerHTML = entry.innerHTML.replace(urlElement.outerHTML, newUrlHtml);
             }
         });
     }
@@ -109,6 +113,34 @@ document.addEventListener('DOMContentLoaded', function() {
         updateFontSizeValue();
     });
 
+    // Add event listener for displayEntryNumber checkbox
+    displayEntryNumberInput.addEventListener('change', () => {
+        updateExampleEntries();
+    });
+
+    // Function to handle artifacts to save change
+    function handleArtifactsToSaveChange(event) {
+        const newValue = event.target.value;
+        const confirmationMessages = {
+            textAndImages: "Are you sure you want to save both text and images?",
+            textOnly: `Are you sure you want to save only text?
+This will clear your Palimpsest of all images.`,
+            imagesOnly: `Are you sure you want to save only images? 
+This will clear your Palimpsest of all text.`
+        };
+
+        const confirmed = confirm(confirmationMessages[newValue]);
+        
+        if (confirmed) {
+            chrome.storage.local.set({ artifactsToSave: newValue }, () => {
+                chrome.runtime.sendMessage({ action: "clearNonMatchingEntries", artifactsToSave: newValue });
+                updateArtifactWeightVisibility(newValue);
+            });
+        } else {
+            event.target.value = event.target.dataset.previousValue;
+        }
+    }
+
     // Save options when save button is clicked
     saveButton.addEventListener('click', function() {
         // Get current values
@@ -123,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const entryBorderRadius = entryBorderRadiusInput.value;
         const layerOrder = layerOrderSelect.value;
         const displayEntryNumber = displayEntryNumberInput.checked;
+        const artifactWeight = parseInt(artifactWeightInput.value);
 
         // Create options object
         const options = {
@@ -134,18 +167,19 @@ document.addEventListener('DOMContentLoaded', function() {
             urlBackgroundColor: urlBackgroundColor,
             entryBorderRadius: parseInt(entryBorderRadius),
             layerOrder: layerOrder,
-            displayEntryNumber: displayEntryNumber
+            displayEntryNumber: displayEntryNumber,
+            artifactWeight: artifactWeight
         };
 
         // Save options to chrome storage
         chrome.storage.local.set(options, function() {
-            console.log('Display options saved:', options); // Add this line for debugging
+            console.log('Display options saved:', options);
             alert('Display options saved successfully!');
         });
     });
 
     // Load saved options when the page loads
-    chrome.storage.local.get(['entryBackgroundColor', 'pageBackgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor', 'entryBorderRadius', 'layerOrder', 'displayEntryNumber'], function(items) {
+    chrome.storage.local.get(['entryBackgroundColor', 'pageBackgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor', 'entryBorderRadius', 'layerOrder', 'displayEntryNumber', 'artifactWeight'], function(items) {
         // Set input values based on saved options
         if (items.entryBackgroundColor) {
             const match = items.entryBackgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/);
@@ -171,41 +205,67 @@ document.addEventListener('DOMContentLoaded', function() {
         if (items.layerOrder) layerOrderSelect.value = items.layerOrder;
         if (items.displayEntryNumber !== undefined) {
             displayEntryNumberInput.checked = items.displayEntryNumber;
-            console.log('Loaded Display Entry Number:', items.displayEntryNumber); // Add this line for debugging
+        }
+        if (items.artifactWeight !== undefined) {
+            artifactWeightInput.value = items.artifactWeight;
+            updateWeightRatio();
         }
         updateExampleEntries();
     });
 
-    // Function to create example entries
-    function createExampleEntries() {
-        const exampleEntriesContainer = document.querySelector('.example-entries');
-        exampleEntriesContainer.innerHTML = ''; // Clear existing entries
+    // Call updateExampleEntries after creating the entries
+    updateExampleEntries();
 
-        // Create text entry
-        const textEntry = document.createElement('div');
-        textEntry.className = 'entry';
-        textEntry.innerHTML = `
-            <a href="#" class="entry-url">example-1.com</a>
-            <div class="entry-content">
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-        `;
+    // Make sure to call updateExampleEntries when the checkbox changes
+    displayEntryNumberInput.addEventListener('change', () => {
+        console.log('Display Entry Number changed:', displayEntryNumberInput.checked);
+        updateExampleEntries();
+    });
 
-        // Create image entry
-        const imageEntry = document.createElement('div');
-        imageEntry.className = 'entry';
-        imageEntry.innerHTML = `
-            <a href="#" class="entry-url">example-2.com</a>
-            <div class="entry-content">
-                <img src="../images/example-image.jpg" alt="Example Image" style="max-width: 100px; height: auto;">
-            </div>
-        `;
+    // Also call updateExampleEntries when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        createExampleEntries();
+        updateExampleEntries();
+    });
 
-        // Add entries to container
-        exampleEntriesContainer.appendChild(textEntry);
-        exampleEntriesContainer.appendChild(imageEntry);
+    // Make sure to call updateExampleEntries when any option changes
+    [entryBackgroundColorInput, backgroundOpacityInput, textColorInput, fontSizeInput, 
+     urlColorInput, urlBackgroundColorInput, pageBackgroundColorInput, entryBorderRadiusInput, 
+     displayEntryNumberInput].forEach(input => {
+        input.addEventListener('input', updateExampleEntries);
+        input.addEventListener('change', updateExampleEntries);
+    });
+
+    // Call updateExampleEntries when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        updateExampleEntries();
+    });
+
+    function updateArtifactWeightVisibility(artifactsToSave) {
+        if (artifactsToSave === 'textAndImages') {
+            artifactWeightOption.style.display = 'block';
+        } else {
+            artifactWeightOption.style.display = 'none';
+        }
     }
 
-    // Create example entries when the page loads
-    createExampleEntries();
+    function updateWeightRatio() {
+        const weight = artifactWeightInput.value;
+        const imageWeight = 100 - weight;
+        const textWeight = weight;
+        weightRatioSpan.textContent = `${imageWeight}/${textWeight}`;
+    }
+
+    // Update weight ratio in real-time as the slider moves
+    artifactWeightInput.addEventListener('input', () => {
+        updateWeightRatio();
+    });
+
+    // Save the weight when the slider stops
+    artifactWeightInput.addEventListener('change', () => {
+        chrome.storage.local.set({ artifactWeight: parseInt(artifactWeightInput.value) });
+    });
+
+    // Initial update of weight ratio
+    updateWeightRatio();
 });

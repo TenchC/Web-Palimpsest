@@ -72,22 +72,34 @@
                             <option value="random">Random</option>
                         </select>
                     </div>
+                    <div class="option">
+                        <label for="artifactWeight">Artifact Selection Weight: <span id="weightRatio">50/50</span></label>
+                        <input type="range" id="artifactWeight" min="0" max="100" value="50">
+                        <div class="weight-labels">
+                            <span>Images</span>
+                            <span>Text</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <h2>Example Entries</h2>
         <div class="example-entries">
-            <div class="entry" id="textEntry">
-                <a href="#" class="entry-url">example-1.com</a>
-                <div class="entry-content">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <div class="entry-container">
+                <div class="entry" id="textEntry">
+                    <a href="#" class="entry-url">example-1.com</a>
+                    <div class="entry-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </div>
                 </div>
             </div>
-            <div class="entry" id="imageEntry">
-                <a href="#" class="entry-url">example-2.com</a>
-                <div class="entry-content">
-                    <img src="../images/example-image.jpg" alt="Example Image">
+            <div class="entry-container">
+                <div class="entry" id="imageEntry">
+                    <a href="#" class="entry-url">example-2.com</a>
+                    <div class="entry-content">
+                        <img src="../images/example-image.jpg" alt="Example Image">
+                    </div>
                 </div>
             </div>
         </div>
