@@ -107,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('URLs cleared');
             displayUrlInfo();
             confirmModal.style.display = 'none';
+            
+            // Send message to clear history
+            chrome.runtime.sendMessage({ action: "clearHistory" });
         });
     });
 

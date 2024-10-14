@@ -152,29 +152,42 @@ document.addEventListener('DOMContentLoaded', () => {
         return contentElement;
     }
 
+    function clearHistory() {
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+    }
+
     // Initial load of options
     loadAndApplyOptions();
 
     chrome.storage.local.get(['visitedUrls'], (result) => {
         const urls = result.visitedUrls || [];
         
-        if (urls.length === 0) {
-            historyContainer.textContent = 'Your palimpsest is empty.';
-        } else {
-            urls.forEach((entry, index) => {
-                const contentElement = createEntry(entry, index);
-                document.body.appendChild(contentElement);
-            });
+        urls.forEach((entry, index) => {
+            const contentElement = createEntry(entry, index);
+            document.body.appendChild(contentElement);
+        });
 
-            // Apply sort order and display options after all entries are created
-            loadAndApplyOptions();
-        }
+        // Apply sort order and display options after all entries are created
+        loadAndApplyOptions();
     });
 
     // Listen for changes in storage and reapply styles
     chrome.storage.onChanged.addListener((changes, namespace) => {
         if (namespace === 'local') {
-            loadAndApplyOptions();
+            if (changes.visitedUrls && changes.visitedUrls.newValue.length === 0) {
+                clearHistory();
+            } else {
+                loadAndApplyOptions();
+            }
+        }
+    });
+
+    // Listen for messages from popup.js
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.action === "clearHistory") {
+            clearHistory();
         }
     });
 
