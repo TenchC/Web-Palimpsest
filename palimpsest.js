@@ -75,14 +75,18 @@ function getRandomText() {
 
 //get random image
 function getRandomImage() {
-    //search for images with src and width and height greater than 50
     const images = Array.from(document.getElementsByTagName('img')).filter(img => 
         isElementVisible(img) && img.src && img.naturalWidth > 50 && img.naturalHeight > 50
     );
-//if there's no images, run getRandomText
+
     if (images.length > 0) {
         const randomImage = images[Math.floor(Math.random() * images.length)];
-        return { type: 'image', content: randomImage.src, alt: randomImage.alt || 'No alt text available', element: randomImage };
+        return { 
+            type: 'image', 
+            content: randomImage.src, 
+            alt: randomImage.alt || 'No alt text available', 
+            element: randomImage 
+        };
     }
     return { type: 'text', content: "No suitable image found on this page." };
 }

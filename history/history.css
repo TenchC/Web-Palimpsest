@@ -8,7 +8,7 @@
 body {
     font-family: Arial, sans-serif;
     max-width: 100vw;
-    margin: 0 auto;
+    margin: 0;
     padding: 20px;
     position: fixed;
     top: 0;
@@ -18,6 +18,31 @@ body {
     overflow: hidden;
 }
 
+body.grid-mode {
+    position: static;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+    padding: 0;
+}
+
+#historyContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.column {
+    width: calc(14.285% - 10px); /* 100% / 7 columns */
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-mode .column {
+    width: 14.285%;
+    padding: 0;
+}
+
 p {
     padding: 2px 8px 8px 8px;
     margin: 0;
@@ -25,7 +50,7 @@ p {
 
 .entry {
     margin: 0 10px 10px 10px;
-    padding: 0 0 0 0;
+    padding: 0;
     box-sizing: border-box;
     overflow: hidden;
     max-width: 80vw;
@@ -35,7 +60,20 @@ p {
     transition: all 0.3s ease;
     background-color: transparent;
     border-radius: 0;
-    min-width: 100px; /* Set a minimum width for entries */
+    min-width: 100px;
+}
+
+.grid-mode .entry {
+    position: static;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    background-color: var(--hover-background-color);
+    border: 1px solid black;
+    border-radius: var(--entry-border-radius);
+    box-sizing: border-box;
 }
 
 .entry-url {
@@ -58,6 +96,13 @@ p {
     max-width: none; /* Remove any max-width constraint */
 }
 
+.grid-mode .entry-url {
+    display: block;
+    border-radius: var(--entry-border-radius) var(--entry-border-radius) 0 0;
+    padding: 5px 6px;
+    width: calc(100% - 12px);
+}
+
 .entry-content {
     width: auto;
     max-width: 200px;
@@ -69,6 +114,11 @@ p {
     width: auto; /* Allow it to grow if needed */
 }
 
+.grid-mode .entry-content {
+    max-width: none;
+    background-color: var(--hover-background-color);
+}
+
 .entry-content img {
     max-width: 100%;
     width: auto;
@@ -77,24 +127,28 @@ p {
     object-fit: contain;
 }
 
-.entry-hover .entry-url {
-    display: block;
-    border-radius: var(--entry-border-radius) var(--entry-border-radius) 0 0;
-    padding: 5px 6px; /* Slightly increase padding when hovering */
-    width: calc(100% - 12px); /* Adjust width for the increased padding */
+.grid-mode .entry-content img {
+    max-height: none;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 .entry-hover {
+    background-color: var(--hover-background-color);
     z-index: 9999 !important;
     transform: scale(1.2);
-    border: 1px solid black;
-    background-color: var(--hover-background-color) !important;
-    border-radius: var(--entry-border-radius);
 }
 
-.entry-hover .entry-content {
-    background-color: var(--hover-background-color) !important;
+.grid-mode .entry-hover {
+    transform: scale(1.1);
 }
 
-
+.entry-hover .entry-url {
+    display: block;
+    border-radius: var(--entry-border-radius) var(--entry-border-radius) 0 0;
+    padding: 5px 6px;
+    width: calc(100% - 12px);
+}
 

@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const displayEntryNumberInput = document.getElementById('displayEntryNumber');
     const artifactWeightInput = document.getElementById('artifactWeight');
     const weightRatioSpan = document.getElementById('weightRatio');
+    const displayModeSelect = document.getElementById('displayMode');
+    const displayHeaderInput = document.getElementById('displayHeader');
     console.log(weightRatioSpan);
     
     // Function to update opacity value display
@@ -45,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const urlBackgroundColor = urlBackgroundColorInput.value;
         const entryBorderRadius = entryBorderRadiusInput.value;
         const displayEntryNumber = displayEntryNumberInput.checked;
+        const displayHeader = displayHeaderInput.checked;
 
         // Apply settings to example entries
         exampleEntriesDiv.style.backgroundColor = pageBackgroundColor;
@@ -64,19 +67,36 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const urlElement = entry.querySelector('.entry-url');
             if (urlElement) {
+                urlElement.style.color = urlColor;
+                urlElement.style.backgroundColor = urlBackgroundColor;
+                urlElement.style.borderRadius = `${entryBorderRadius}px ${entryBorderRadius}px 0 0`;
+                
+                // Initially hide the URL element
+                urlElement.style.display = 'none';
+
                 // Get the base URL text (without entry number)
                 let baseUrlText = urlElement.textContent.split(' - ')[0];
                 
-                let newUrlHtml = `<a href="#" class="entry-url" style="color: ${urlColor}; background-color: ${urlBackgroundColor};">`;
                 if (displayEntryNumber) {
-                    newUrlHtml += `${baseUrlText} - Entry ${index + 1}`;
+                    urlElement.textContent = `${baseUrlText} - Artifact ${index + 1}`;
                 } else {
-                    newUrlHtml += baseUrlText;
+                    urlElement.textContent = baseUrlText;
                 }
-                newUrlHtml += '</a>';
-                
-                entry.innerHTML = entry.innerHTML.replace(urlElement.outerHTML, newUrlHtml);
             }
+
+            // Update hover effect based on displayHeader
+            entry.onmouseenter = () => {
+                entry.classList.add('entry-hover');
+                if (urlElement && displayHeader) {
+                    urlElement.style.display = 'block';
+                }
+            };
+            entry.onmouseleave = () => {
+                entry.classList.remove('entry-hover');
+                if (urlElement) {
+                    urlElement.style.display = 'none';
+                }
+            };
         });
     }
 
@@ -157,6 +177,8 @@ This will clear your Palimpsest of all text.`
         const layerOrder = layerOrderSelect.value;
         const displayEntryNumber = displayEntryNumberInput.checked;
         const artifactWeight = parseInt(artifactWeightInput.value);
+        const displayMode = displayModeSelect.value;
+        const displayHeader = displayHeaderInput.checked;
 
         // Create options object
         const options = {
@@ -169,7 +191,9 @@ This will clear your Palimpsest of all text.`
             entryBorderRadius: parseInt(entryBorderRadius),
             layerOrder: layerOrder,
             displayEntryNumber: displayEntryNumber,
-            artifactWeight: artifactWeight
+            artifactWeight: artifactWeight,
+            displayMode: displayMode,
+            displayHeader: displayHeader
         };
 
         // Save options to chrome storage
@@ -180,7 +204,7 @@ This will clear your Palimpsest of all text.`
     });
 
     // Load saved options when the page loads
-    chrome.storage.local.get(['entryBackgroundColor', 'pageBackgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor', 'entryBorderRadius', 'layerOrder', 'displayEntryNumber', 'artifactWeight'], function(items) {
+    chrome.storage.local.get(['entryBackgroundColor', 'pageBackgroundColor', 'textColor', 'fontSize', 'urlColor', 'urlBackgroundColor', 'entryBorderRadius', 'layerOrder', 'displayEntryNumber', 'artifactWeight', 'displayMode', 'displayHeader'], function(items) {
         // Set input values based on saved options
         if (items.entryBackgroundColor) {
             const match = items.entryBackgroundColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/);
@@ -210,6 +234,18 @@ This will clear your Palimpsest of all text.`
         if (items.artifactWeight !== undefined) {
             artifactWeightInput.value = items.artifactWeight;
             updateWeightRatio();
+        }
+        if (items.displayMode) {
+            displayModeSelect.value = items.displayMode;
+        } else {
+            // Set default value to "palimpsest" if not set
+            displayModeSelect.value = "palimpsest";
+        }
+        if (items.displayHeader !== undefined) {
+            displayHeaderInput.checked = items.displayHeader;
+        } else {
+            // Set default value to true if not set
+            displayHeaderInput.checked = true;
         }
         updateExampleEntries();
     });
@@ -269,4 +305,9 @@ This will clear your Palimpsest of all text.`
 
     // Initial update of weight ratio
     updateWeightRatio();
+
+    // Add event listener for displayHeader checkbox
+    displayHeaderInput.addEventListener('change', () => {
+        updateExampleEntries();
+    });
 });

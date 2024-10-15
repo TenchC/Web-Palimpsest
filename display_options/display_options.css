@@ -3,6 +3,7 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 20px;
+    overflow: hidden;
 }
 
 h1, h2 {
@@ -94,6 +95,7 @@ p{
     justify-content: space-between;
     align-items: center;
     min-height: 200px; /* Adjust this value as needed */
+    height: 400px;
 }
 
 .entry-container {
@@ -156,7 +158,7 @@ p{
 
 .entry-content img {
     height: auto;
-    max-width: 100%;
+    max-width: 100px;
     max-height: 100%;
     object-fit: contain;
     transition: all 0.3s ease;
