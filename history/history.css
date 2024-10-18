@@ -81,7 +81,7 @@ p {
     background-color: var(--url-background-color);
     font-size: 12px;
     padding: 5px 4px; /* Added horizontal padding */
-    border-bottom: 1px dashed black;
+    border-bottom: 1px solid black;
     display: none;
     text-decoration: none;
     text-align: center;
