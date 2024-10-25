@@ -1,3 +1,4 @@
+/* General styles */
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -8,45 +9,46 @@ body {
 
 h1, h2 {
     color: #333;
+    margin: 0;
 }
 
-label {
-    display: inline-block;
-    width: fit-content;
+h1{
+    font-size: 30px;
 }
 
-a{
-    font-size: 10px;
+h2{
+    font-size: 20px;
 }
 
+/* Common input styles */
 input[type="range"], input[type="color"], input[type="number"] {
     width: 100px;
 }
 
+/* Button styles */
 button {
     background-color: #4CAF50;
     color: white;
-    padding: 10px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    padding: 15px 25px;
+    font-size: 20px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #45a049;
 }
 
-p{
-    margin: 0;
-}
-
+/* Layout styles */
 .container {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
 }
 
-#displayOptionsContainer{
+#displayOptionsContainer {
     overflow-y: hidden;
 }
 
@@ -57,24 +59,7 @@ p{
     margin-bottom: 20px;
 }
 
-.header h1 {
-    margin: 0;
-}
-
-#saveOptions {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#saveOptions:hover {
-    background-color: #45a049;
-}
-
+/* Options section styles */
 .options-section {
     margin-bottom: 20px;
 }
@@ -93,17 +78,19 @@ p{
     max-width: calc(33.33% + 15%);
 }
 
+/* Example entries styles */
 .example-entries {
-    margin-top: 20px;
+    margin: 10px 0 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 200px; /* Adjust this value as needed */
-    height: 400px;
+    min-height: 200px;
+    height: 40%;
+    border: 2px solid black;
 }
 
 .entry-container {
-    width: 45%; /* Adjust this value to control the width of each container */
+    width: 45%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -112,18 +99,15 @@ p{
 .entry {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     margin: 0;
     border: 0px solid black;
-    border-radius: 0 !important;
     overflow: hidden;
     transition: all 0.3s ease;
-    width: auto; /* Take full width of the container */
+    width: auto;
 }
 
-#imageEntry{
-    align-items: center;
-
-}
 #textEntry, #imageEntry {
     position: static;
 }
@@ -138,11 +122,11 @@ p{
     text-align: center;
     transition: all 0.3s ease;
     width: 100%;
+    border-bottom: 1px solid black;
 }
 
 .entry-content {
-
-    background-color: rgba(230,230, 230, 1);
+    background-color: rgba(230, 230, 230, 1);
     transition: all 0.3s ease;
     max-width: 200px;
     width: fit-content;
@@ -161,20 +145,17 @@ p{
 }
 
 .entry-content img {
-    height: auto;
     max-width: 100px;
     max-height: 100%;
     object-fit: contain;
     transition: all 0.3s ease;
     width: fit-content;
-    
 }
 
 .entry:hover {
-    z-index: 9999 !important;
+    z-index: 9999;
     transform: scale(1.2);
     border: 1px solid black;
-    transition: all 0.3s ease;
     width: fit-content;
     border-radius: var(--entry-border-radius, 0px) !important;
 }
@@ -182,84 +163,57 @@ p{
 .entry:hover .entry-url {
     background-color: var(--url-background-color);
     display: block;
-    transition: all 0.3s ease;
 }
 
-/* Remove individual positioning for entries */
-#textEntry, #imageEntry {
-    position: static;
+/* Switch styles */
+.switch {
+    display: inline-block;
+    width: 60px;
+    height: 20px;
+    margin: 4px;
+    transform: translateY(50%);
+    position: relative;
 }
 
-.switch input
-{
-  display: none;
+.switch input {
+    display: none;
 }
 
-.switch 
-{
-  display: inline-block;
-  width: 60px; /*=w*/
-  height: 20px; /*=h*/
-  margin: 4px;
-  transform: translateY(50%);
-  position: relative;
+.slider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 20px;
+    box-shadow: 0 0 0 2px #777, 0 0 4px #777;
+    cursor: pointer;
+    border: 4px solid transparent;
+    overflow: hidden;
+    transition: 0.2s;
 }
 
-.slider
-{
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  border-radius: 20px;
-  box-shadow: 0 0 0 2px #777, 0 0 4px #777;
-  cursor: pointer;
-  border: 4px solid transparent;
-  overflow: hidden;
-  transition: 0.2s;
+.slider:before {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    background-color: #777;
+    border-radius: 30px;
+    transform: translateX(-30px);
+    transition: 0.2s;
 }
 
-.slider:before
-{
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  background-color: #777;
-  border-radius: 30px;
-  transform: translateX(-30px); /*translateX(-(w-h))*/
-  transition: 0.2s;
+input:checked + .slider:before {
+    transform: translateX(30px);
+    background-color: limeGreen;
 }
 
-input:checked + .slider:before
-{
-  transform: translateX(30px); /*translateX(w-h)*/
-  background-color: limeGreen;
+input:checked + .slider {
+    box-shadow: 0 0 0 2px limeGreen, 0 0 8px limeGreen;
 }
 
-input:checked + .slider
-{
-  box-shadow: 0 0 0 2px limeGreen, 0 0 8px limeGreen;
-}
-
-.switch200 .slider:before
-{
-  width: 200%;
-  transform: translateX(-82px); /*translateX(-(w-h))*/
-}
-
-.switch200 input:checked + .slider:before
-{
-  background-color: red;
-}
-
-.switch200 input:checked + .slider
-{
-  box-shadow: 0 0 0 2px red, 0 0 8px red;
-}
-
+/* Option styles */
 .option {
     margin-bottom: 15px;
 }
@@ -279,7 +233,6 @@ input:checked + .slider
 
 .option input[type="range"] {
     -webkit-appearance: none;
-    width: 100%;
     height: 15px;
     border-radius: 5px;
     background: #d3d3d3;
@@ -292,16 +245,7 @@ input:checked + .slider
     opacity: 1;
 }
 
-.option input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background: #4CAF50;
-    cursor: pointer;
-}
-
+.option input[type="range"]::-webkit-slider-thumb,
 .option input[type="range"]::-moz-range-thumb {
     width: 25px;
     height: 25px;
@@ -310,12 +254,7 @@ input:checked + .slider
     cursor: pointer;
 }
 
-.option span {
-    font-weight: normal;
-}
-
 .option select {
-    width: 100%;
     padding: 5px;
     border-radius: 4px;
     border: 1px solid #ccc;
@@ -329,6 +268,7 @@ input:checked + .slider
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }
 
+/* Weight styles */
 .weight-labels {
     display: flex;
     justify-content: space-between;
@@ -341,17 +281,18 @@ input:checked + .slider
 }
 
 .weight-data {
-    font-weight: bold !important;
+    font-weight: bold;
     margin-left: 5px;
 }
 
-/* New styles for the page layout */
+/* Page layout styles */
 .page-layout {
     display: flex;
     height: 100vh;
     overflow: hidden;
 }
 
+/* Banned websites styles */
 .banned-websites {
     width: 300px;
     background-color: #f0f0f0;
@@ -364,24 +305,6 @@ input:checked + .slider
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-}
-
-.banned-header h2 {
-    margin: 0;
-}
-
-.banned-header button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.banned-header button:hover {
-    background-color: #45a049;
 }
 
 .banned-list input[type="text"] {
@@ -410,15 +333,11 @@ input:checked + .slider
 
 #bannedWebsitesList li button {
     background-color: #ff4d4d;
-    color: white;
-    border: none;
     padding: 2px 5px;
-    cursor: pointer;
     font-size: 12px;
 }
 
-#banWebsite{
+#banWebsite {
     width: 100%;
-    padding: 3% 0 3% 0;
-
+    padding: 3% 0;
 }

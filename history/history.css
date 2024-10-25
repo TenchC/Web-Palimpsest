@@ -5,6 +5,10 @@
     --entry-border-radius: 0px;
 }
 
+body{
+    margin: 0px;
+}
+
 /* Styles for the main history container in grid mode */
 #historyContainer {
     display: flex;
