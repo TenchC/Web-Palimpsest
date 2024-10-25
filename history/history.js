@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const historyContainer = document.getElementById('historyContainer');
     const columns = Array.from({ length: 7 }, (_, i) => document.getElementById(`column${i + 1}`));
 
+    // Helper function to clean up URLs for display
     function tidyUrl(url) {
         try {
             const urlObj = new URL(url);
@@ -13,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Apply global styles based on user options
+    // This function interacts with CSS variables defined in history.css
     function applyGlobalStyles(options) {
         document.body.style.backgroundColor = options.pageBackgroundColor;
         document.documentElement.style.setProperty('--url-color', options.urlColor);
@@ -20,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.style.setProperty('--entry-border-radius', `${options.entryBorderRadius}px`);
     }
 
+    // Arrange entries based on the selected layer order and display mode
+    // This function affects the z-index of entries in palimpsest mode
+    // and the order of entries in grid mode
     function applyLayerOrder(entries, layerOrder, displayMode) {
         const entriesArray = Array.from(entries);
         if (displayMode === 'grid') {
@@ -65,6 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Create and style individual history entries
+    // This function creates DOM elements and applies styles based on user options
+    // It interacts with various CSS classes defined in history.css
     function createAndStyleEntry(entry, index, options) {
         const contentElement = document.createElement('div');
         contentElement.className = 'entry';
@@ -121,6 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return contentElement;
     }
 
+    // Apply specific styles based on the current display mode (grid or palimpsest)
+    // This function toggles CSS classes and styles to switch between modes
     function styleEntryForDisplayMode(contentElement, urlElement, options) {
         if (options.displayMode === 'grid') {
             contentElement.classList.add('grid-entry');
@@ -148,6 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Apply the overall layout based on the selected display mode
+    // This function toggles between grid and palimpsest layouts
+    // It interacts with CSS classes in history.css to change the layout
     function applyLayout(entries, options) {
         document.body.classList.toggle('grid-mode', options.displayMode === 'grid');
         document.body.style.overflow = options.displayMode === 'grid' ? 'auto' : 'hidden';
@@ -165,6 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
         applyLayerOrder(entries, options.layerOrder, options.displayMode);
     }
 
+    // Load user options from storage and create history entries
+    // This function initializes the page layout and styles
     function loadOptionsAndCreateEntries() {
         return new Promise((resolve) => {
             chrome.storage.local.get([
@@ -199,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Clear all history entries from the page
     function clearHistory() {
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
@@ -206,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         columns.forEach(column => column.innerHTML = '');
     }
 
+    // Dynamically adjust URL font size to fit within its container
     function adjustUrlFontSize(urlElement) {
         const originalFontSize = parseFloat(getComputedStyle(urlElement).fontSize);
         let fontSize = originalFontSize;
@@ -220,7 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
+    // Remove the fade-in element after initial load
+    // This function interacts with the fade-in animation defined in history.css
     function removeFadeIn() {
         const fadeIn = document.getElementById('fade-in');
         if (fadeIn) {
@@ -233,13 +252,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initial load
+    // Initial load of the page
     loadOptionsAndCreateEntries().then(() => {
         console.log('Options loaded and entries created, removing fade-in');
         removeFadeIn();
     });
 
-    // Listen for changes in storage and reapply styles
+    // Listen for changes in storage and update the page accordingly
     chrome.storage.onChanged.addListener((changes, namespace) => {
         if (namespace === 'local') {
             if (changes.visitedUrls && changes.visitedUrls.newValue.length === 0) {
@@ -250,13 +269,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Listen for messages from popup.js
+    // Listen for messages from popup.js to clear history
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.action === "clearHistory") {
             clearHistory();
         }
     });
 
+    // Trigger the fade-out of the initial loading screen
     document.getElementById('fade-in').style.opacity = 0;
-    
 });
