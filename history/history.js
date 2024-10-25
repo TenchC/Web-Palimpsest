@@ -36,26 +36,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to apply display options
     function applyDisplayOptions(options) {
-        document.documentElement.style.setProperty('--hover-background-color', options.entryBackgroundColor);
+        console.log('Applying display options:', options);
+
         document.body.style.backgroundColor = options.pageBackgroundColor;
         document.documentElement.style.setProperty('--url-color', options.urlColor);
         document.documentElement.style.setProperty('--url-background-color', options.urlBackgroundColor);
         document.documentElement.style.setProperty('--entry-border-radius', `${options.entryBorderRadius}px`);
 
-        console.log('Applying Display Entry Number:', options.displayEntryNumber);
-        console.log('Display Header:', options.displayHeader);
-
         const entries = document.querySelectorAll('.entry');
+
         entries.forEach((entry, index) => {
-            entry.style.color = options.textColor;
-            entry.style.fontSize = `${options.fontSize}px`;
-            
+            const contentElement = entry.querySelector('.entry-content');
+
+            if (contentElement) {
+                const storedStyles = entry.dataset.styles ? JSON.parse(entry.dataset.styles) : null;
+                if (storedStyles && storedStyles.backgroundColor) {
+                    contentElement.style.backgroundColor = storedStyles.backgroundColor;
+                } else {
+                    contentElement.style.backgroundColor = 'transparent';
+                }
+            } 
+
+            const urlElement = entry.querySelector('.entry-url');
+
+            if (contentElement) {
+                const storedStyles = entry.dataset.styles ? JSON.parse(entry.dataset.styles) : null;
+                if (storedStyles) {
+                    // Apply stored styles to the content element
+                    Object.assign(contentElement.style, storedStyles);
+                }
+            }
+
             entry.classList.remove('rounded');
             if (options.entryBorderRadius > 0) {
                 entry.classList.add('rounded');
             }
 
-            const urlElement = entry.querySelector('.entry-url');
             if (urlElement) {
                 urlElement.style.color = options.urlColor;
                 urlElement.style.backgroundColor = options.urlBackgroundColor;
@@ -95,6 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
             }
+
+            console.log(`Entry ${index + 1} after applying options:`, entry);
+
         });
 
         if (options.displayMode === 'grid') {
@@ -167,18 +186,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load display options and apply them
     function loadAndApplyOptions() {
         chrome.storage.local.get([
-            'entryBackgroundColor', 'pageBackgroundColor', 'textColor', 'urlColor', 
-            'urlBackgroundColor', 'entryBorderRadius', 'fontSize', 'layerOrder', 
+            'pageBackgroundColor', 'urlColor', 
+            'urlBackgroundColor', 'entryBorderRadius', 'layerOrder', 
             'displayEntryNumber', 'displayMode', 'displayHeader'
         ], function(items) {
             const options = {
-                entryBackgroundColor: items.entryBackgroundColor || 'rgba(255, 255, 255, 1)',
                 pageBackgroundColor: items.pageBackgroundColor || '#FFFFFF',
-                textColor: items.textColor || '#000000',
                 urlColor: items.urlColor || '#FF0000',
                 urlBackgroundColor: items.urlBackgroundColor || '#FFFFFF',
                 entryBorderRadius: items.entryBorderRadius || 0,
-                fontSize: items.fontSize || 14,
                 layerOrder: items.layerOrder || 'newestOnTop',
                 displayEntryNumber: items.displayEntryNumber !== undefined ? items.displayEntryNumber : false,
                 displayMode: items.displayMode || 'palimpsest',
@@ -200,20 +216,30 @@ document.addEventListener('DOMContentLoaded', () => {
         urlElement.href = entry.url;
         urlElement.textContent = tidyUrl(entry.url);
         urlElement.className = 'entry-url';
-        urlElement.target = '_blank'; // Open link in new tab
+        urlElement.target = '_blank';
         contentElement.appendChild(urlElement);
         
         // Create a wrapper for the content
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'entry-content';
-        
-        if (entry.content.type === 'text') {
+
+        if (entry.content && entry.content.type === 'text') {
             contentWrapper.innerHTML = `<p>${entry.content.content}</p>`;
-        } else if (entry.content.type === 'image') {
-            contentWrapper.innerHTML = `<img src="${entry.content.content}" alt="${entry.content.alt}">`;
+        } else if (entry.content && entry.content.type === 'image') {
+            contentWrapper.innerHTML = `<img src="${entry.content.content}" alt="Image">`;
+        } else {
+            console.error('Unknown content type:', entry.content);
         }
         
         contentElement.appendChild(contentWrapper);
+        
+        // Store the styles as a data attribute
+        if (entry.content && entry.content.styles) {
+            contentElement.dataset.styles = JSON.stringify(entry.content.styles);
+            
+            // Apply stored styles to the content wrapper
+            Object.assign(contentWrapper.style, entry.content.styles);
+        }
         
         // Calculate position within viewport
         const maxX = 95; // 95vw to leave some margin
@@ -223,22 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         contentElement.style.left = `${x}vw`;
         contentElement.style.top = `${y}vh`;
-        
-        // Add hover effects
-        contentElement.addEventListener('mouseenter', () => {
-            contentElement.classList.add('entry-hover');
-            if (document.body.classList.contains('grid-mode')) {
-                contentElement.style.transform = 'scale(1.1)';
-            }
-        });
-        
-        contentElement.addEventListener('mouseleave', () => {
-            contentElement.classList.remove('entry-hover');
-            if (document.body.classList.contains('grid-mode')) {
-                contentElement.style.transform = 'scale(1)';
-            }
-        });
-        
+
         return contentElement;
     }
 
@@ -253,8 +264,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     chrome.storage.local.get(['visitedUrls'], (result) => {
         const urls = result.visitedUrls || [];
+        console.log('Retrieved URLs:', urls);
         
         urls.forEach((entry, index) => {
+            console.log(`Processing entry ${index}:`, entry);
             const contentElement = createEntry(entry, index);
             document.body.appendChild(contentElement);
         });
@@ -295,4 +308,5 @@ document.addEventListener('DOMContentLoaded', () => {
             urlElement.style.fontSize = `${fontSize}px`;
         }
     }
+
 });

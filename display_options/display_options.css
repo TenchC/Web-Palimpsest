@@ -138,14 +138,13 @@ p{
 
 .entry-content {
 
-    background-color: transparent;
+    background-color: rgba(230,230, 230, 1);
     transition: all 0.3s ease;
     max-width: 200px;
     width: fit-content;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 150px;
 }
 
 .entry-content p {
@@ -154,6 +153,7 @@ p{
     word-wrap: break-word;
     transition: all 0.3s ease;
     max-height: 200px;
+    color: var(--text-color, #000000);
 }
 
 .entry-content img {
@@ -170,7 +170,6 @@ p{
     z-index: 9999 !important;
     transform: scale(1.2);
     border: 1px solid black;
-    background-color: var(--hover-background-color);
     transition: all 0.3s ease;
     width: fit-content;
     border-radius: var(--entry-border-radius, 0px) !important;

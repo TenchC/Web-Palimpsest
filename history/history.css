@@ -1,8 +1,8 @@
 :root {
-    --hover-background-color: rgba(255, 255, 255, 1);
     --url-color: #FF0000;
     --url-background-color: #FFFFFF;
     --entry-border-radius: 0px;
+    --background-color: #000000;
 }
 
 body {
@@ -16,6 +16,7 @@ body {
     right: 0;
     bottom: 0;
     overflow: hidden;
+    background-color: #000000;
 }
 
 body.grid-mode {
@@ -24,6 +25,7 @@ body.grid-mode {
     height: auto;
     min-height: 100vh;
     padding: 0;
+    background-color: var(--background-color);
 }
 
 #historyContainer {
@@ -59,8 +61,10 @@ p {
     position: absolute;
     transition: all 0.3s ease;
     background-color: transparent;
-    border-radius: 0;
+    border-radius: var(--entry-border-radius) var(--entry-border-radius) var(--entry-border-radius) var(--entry-border-radius);
     min-width: 100px;
+    width: auto;
+    height: auto;
 }
 
 .grid-mode .entry {
@@ -112,11 +116,11 @@ p {
     border-radius: 0;
     min-width: 100%; /* Ensure content is at least as wide as the entry */
     width: auto; /* Allow it to grow if needed */
+    height: auto;
 }
 
 .grid-mode .entry-content {
     max-width: none;
-    background-color: var(--hover-background-color);
 }
 
 .entry-content img {
@@ -136,8 +140,7 @@ p {
 }
 
 .entry-hover {
-    background-color: var(--hover-background-color);
-    z-index: 9999 !important;
+    z-index: 301 !important;
     transform: scale(1.2);
     border-radius: var(--entry-border-radius) var(--entry-border-radius) var(--entry-border-radius) var(--entry-border-radius) !important;
 }
@@ -153,3 +156,7 @@ p {
     width: calc(100% - 12px);
 }
 
+.hidden {
+    visibility: hidden !important;
+    display: none !important;
+}

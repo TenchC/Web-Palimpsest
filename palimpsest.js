@@ -11,12 +11,12 @@ function getRandomContent() {
             
             if (Math.random() < imageThreshold) {
                 content = getRandomImage();
-                if (content.content === "No suitable image found on this page.") {
+                if (content.content === "No suitable image found on this page." && imageThreshold === 0) {
                     content = getRandomText();
                 }
             } else {
                 content = getRandomText();
-                if (content.content === "No suitable text found on this page.") {
+                if (content.content === "No suitable text found on this page." && imageThreshold === 1) {
                     content = getRandomImage();
                 }
             }
@@ -29,6 +29,7 @@ function getRandomContent() {
                 if (content.element) {
                     content.element.style.border = '2px solid red';
                 }
+                console.log('Random content selected:', content);
                 resolve(content);
             }
         });
@@ -41,7 +42,6 @@ function getRandomText() {
         document.body,
         NodeFilter.SHOW_TEXT,
         {
-            //only accept nodes that are visible, not in script, style, no script, iframe, and are longer than 50 characters
             acceptNode: function(node) {
                 if (node.parentElement &&
                     isElementVisible(node.parentElement) &&
@@ -58,25 +58,49 @@ function getRandomText() {
     while (walker.nextNode()) {
         textNodes.push(walker.currentNode);
     }
-    //if there's no text nodes, return "No suitable text found on this page."
+
     if (textNodes.length > 0) {
-        // Sort text nodes by length in descending order
         textNodes.sort((a, b) => b.textContent.trim().length - a.textContent.trim().length);
-        
-        // Get the top 10 longest strings (or all if less than 10)
         const topNodes = textNodes.slice(0, Math.min(10, textNodes.length));
-        
-        // Select a random node from the top nodes
         const randomNode = topNodes[Math.floor(Math.random() * topNodes.length)];
-        return { type: 'text', content: randomNode.textContent.trim(), element: randomNode.parentElement };
+        
+        const computedStyle = window.getComputedStyle(randomNode.parentElement);
+        const styles = {
+            fontSize: computedStyle.fontSize,
+            fontFamily: computedStyle.fontFamily,
+            color: computedStyle.color,
+            fontWeight: computedStyle.fontWeight,
+            fontStyle: computedStyle.fontStyle,
+            textDecoration: computedStyle.textDecoration,
+            backgroundColor: getBackgroundColor(randomNode.parentElement),
+        };
+
+        return { 
+            type: 'text', 
+            content: randomNode.textContent.trim(), 
+            element: randomNode.parentElement,
+            styles: styles
+        };
     }
+    console.log('No suitable text found on this page.');
     return { type: 'text', content: "No suitable text found on this page." };
+}
+
+function getBackgroundColor(element) {
+    while (element) {
+        const bgColor = window.getComputedStyle(element).backgroundColor;
+        if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+            return bgColor;
+        }
+        element = element.parentElement;
+    }
+    return 
 }
 
 //get random image
 function getRandomImage() {
     const images = Array.from(document.getElementsByTagName('img')).filter(img => 
-        isElementVisible(img) && img.src && img.naturalWidth > 50 && img.naturalHeight > 50
+        isElementVisible(img) && img.src && img.naturalWidth > 100 && img.naturalHeight > 100
     );
 
     if (images.length > 0) {
@@ -93,26 +117,36 @@ function getRandomImage() {
 
 //save data to chrome storage
 function saveData(url, content) {
+    console.log('Saving data:', { url, content });
     chrome.storage.local.get(['visitedUrls', 'maxUrls'], (result) => {
         let urls = result.visitedUrls || [];
         const maxUrls = result.maxUrls || 100;
         
-        // Generate random position
         const position = {
             x: Math.random() * 90,
             y: Math.random() * 90
         };
         
-        // Add new entry with position
-        urls.push({ url: url, content: content, position: position });
+        const newEntry = { 
+            url: url, 
+            content: {
+                type: content.type,
+                content: content.content,
+                styles: content.styles
+            },
+            position: position 
+        };
         
-        // If we have more than maxUrls entries, remove the oldest ones
+        console.log('New entry being saved:', newEntry);
+        
+        urls.push(newEntry);
+        
         if (urls.length > maxUrls) {
             urls = urls.slice(-maxUrls);
         }
         
         chrome.storage.local.set({ visitedUrls: urls }, () => {
-            console.log('URL, content, and position added to storage:', url, content, position);
+            console.log('URLs after saving:', urls);
             if (urls.length === maxUrls) {
                 console.log(`Reached maximum of ${maxUrls} entries. Oldest entry removed.`);
             }
@@ -125,6 +159,7 @@ if (typeof window !== 'undefined') {
     window.addEventListener('load', () => {
         getRandomContent().then(randomContent => {
             if (randomContent !== null) {
+                console.log('Sending content to background script:', randomContent);
                 chrome.runtime.sendMessage({ action: "saveData", url: window.location.href, content: randomContent });
             } else {
                 console.log('No suitable content found. URL not saved.');
