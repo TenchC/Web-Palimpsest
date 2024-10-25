@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const displayModeSelect = document.getElementById('displayMode');
     const displayHeaderInput = document.getElementById('displayHeader');
 
+    // New code for banned websites functionality
+    const addBannedWebsiteButton = document.getElementById('addBannedWebsite');
+    const banWebsiteInput = document.getElementById('banWebsite');
+    const bannedWebsitesList = document.getElementById('bannedWebsitesList');
+
     // Function to update example entries with current settings
     function updateExampleEntries() {
         // Get current values
@@ -226,4 +231,71 @@ document.addEventListener('DOMContentLoaded', function() {
     displayHeaderInput.addEventListener('change', () => {
         updateExampleEntries();
     });
+
+    // Function to add a website to the banned list
+    function addBannedWebsite() {
+        const website = banWebsiteInput.value.trim();
+        if (website) {
+            chrome.storage.local.get({bannedWebsites: []}, function(result) {
+                let bannedWebsites = result.bannedWebsites;
+                if (!bannedWebsites.includes(website)) {
+                    bannedWebsites.push(website);
+                    chrome.storage.local.set({bannedWebsites: bannedWebsites}, function() {
+                        console.log('Website added to banned list:', website);
+                        updateBannedWebsitesList();
+                        banWebsiteInput.value = ''; // Clear the input field
+                    });
+                } else {
+                    alert('This website is already in the banned list.');
+                }
+            });
+        }
+    }
+
+    // Function to update the displayed list of banned websites
+    function updateBannedWebsitesList() {
+        chrome.storage.local.get({bannedWebsites: []}, function(result) {
+            const bannedWebsites = result.bannedWebsites;
+            bannedWebsitesList.innerHTML = '';
+            bannedWebsites.forEach(function(website) {
+                const li = document.createElement('li');
+                li.textContent = website;
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.onclick = function() {
+                    removeBannedWebsite(website);
+                };
+                li.appendChild(removeButton);
+                bannedWebsitesList.appendChild(li);
+            });
+        });
+    }
+
+    // Function to remove a website from the banned list
+    function removeBannedWebsite(website) {
+        chrome.storage.local.get({bannedWebsites: []}, function(result) {
+            let bannedWebsites = result.bannedWebsites;
+            const index = bannedWebsites.indexOf(website);
+            if (index > -1) {
+                bannedWebsites.splice(index, 1);
+                chrome.storage.local.set({bannedWebsites: bannedWebsites}, function() {
+                    console.log('Website removed from banned list:', website);
+                    updateBannedWebsitesList();
+                });
+            }
+        });
+    }
+
+    // Add event listener for the add button
+    addBannedWebsiteButton.addEventListener('click', addBannedWebsite);
+
+    // Add event listener for the Enter key in the input field
+    banWebsiteInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addBannedWebsite();
+        }
+    });
+
+    // Initial update of the banned websites list
+    updateBannedWebsitesList();
 });

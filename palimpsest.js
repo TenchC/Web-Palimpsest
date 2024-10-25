@@ -1,3 +1,5 @@
+console.log('Palimpsest script loaded');
+
 //check if element is visible
 function isElementVisible(element) {
     return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
@@ -5,7 +7,27 @@ function isElementVisible(element) {
 
 function getRandomContent() {
     return new Promise((resolve) => {
-        chrome.storage.local.get(['artifactWeight'], (result) => {
+        // First, get the current URL
+        const currentUrl = window.location.hostname;
+
+        // Then, check if the current URL is in the banned list
+        chrome.storage.local.get(['bannedWebsites', 'artifactWeight'], (result) => {
+            const bannedWebsites = result.bannedWebsites || [];
+            
+            // Check if the current URL is in the banned list
+            const isBanned = bannedWebsites.some(bannedUrl => {
+                const isMatch = currentUrl.includes(bannedUrl);
+                console.log(`Comparing ${currentUrl} with ${bannedUrl}: ${isMatch}`);
+                return isMatch;
+            });
+
+            if (isBanned) {
+                console.log('Current website is in the banned list. Skipping content selection.');
+                resolve(null);
+                return;
+            }
+
+            // If the website is not banned, proceed with the original logic
             const artifactWeight = result.artifactWeight !== undefined ? result.artifactWeight : 50;
             const imageThreshold = (100 - artifactWeight) / 100;
             
@@ -25,10 +47,6 @@ function getRandomContent() {
                 content.content === "No suitable image found on this page.") {
                 resolve(null);
             } else {
-                // Add red border to the selected content
-                if (content.element) {
-                    content.element.style.border = '2px solid red';
-                }
                 console.log('Random content selected:', content);
                 resolve(content);
             }

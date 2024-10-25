@@ -242,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // This function interacts with the fade-in animation defined in history.css
     function removeFadeIn() {
         const fadeIn = document.getElementById('fade-in');
+        document.getElementById('fade-in').style.opacity = 0;
         if (fadeIn) {
             setTimeout(() => {
                 fadeIn.remove();
@@ -250,10 +251,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.log('Fade-in element not found');
         }
+
+  
     }
 
     // Initial load of the page
     loadOptionsAndCreateEntries().then(() => {
+      
         console.log('Options loaded and entries created, removing fade-in');
         removeFadeIn();
     });
@@ -276,6 +280,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Trigger the fade-out of the initial loading screen
-    document.getElementById('fade-in').style.opacity = 0;
 });

@@ -7,99 +7,114 @@
     <link rel="stylesheet" href="display_options.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Palimpsest Display Options</h1>
-            <button id="saveOptions">Save Options</button>
-        </div>
-        
-        <div class="options-section">
-            <div class="options-columns">
-                <div class="options-column">
-                    <h3>Entry Options</h3>
-                    <div class="option">
-                        <label for="entryBorderRadius">Entry Border Rounding: <span class="weight-data" id="borderRadiusValue">0</span>px</label>
-                        <input type="range" id="entryBorderRadius" min="0" max="20" step="1" value="0">
+    <div class="page-layout">
+        <div class="container" id="displayOptionsContainer">
+            <div class="header">
+                <h1>Palimpsest Display Options</h1>
+                <button id="saveOptions">Save Options</button>
+            </div>
+            
+            <div class="options-section">
+                <div class="options-columns">
+                    <div class="options-column">
+                        <h3>Entry Options</h3>
+                        <div class="option">
+                            <label for="entryBorderRadius">Entry Border Rounding: <span class="weight-data" id="borderRadiusValue">0</span>px</label>
+                            <input type="range" id="entryBorderRadius" min="0" max="20" step="1" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="options-column">
+                        <h3>Entry Header Options</h3>
+                        <div class="option">
+                            <label for="displayHeader">Display Header:</label>
+                            <label class="switch">
+                                <input type="checkbox" id="displayHeader" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <br>
+                        <div class="option">
+                            <label for="urlColor">URL Color:</label>
+                            <input type="color" id="urlColor" value="#FF0000">
+                        </div>
+                        <div class="option">
+                            <label for="urlBackgroundColor">URL Background Color:</label>
+                            <input type="color" id="urlBackgroundColor" value="#FFFFFF">
+                        </div>
+                        <div class="option">
+                            <label for="displayEntryNumber">Display Entry Number:</label>
+                            <label class="switch">
+                                <input type="checkbox" id="displayEntryNumber">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="options-column">
+                        <h3>Page Options</h3>
+                        <div class="option">
+                            <label for="pageBackgroundColor">Page Background Color:</label>
+                            <input type="color" id="pageBackgroundColor" value="#FFFFFF">
+                        </div>
+                        <div class="option">
+                            <label for="displayMode">Display Mode:</label>
+                            <select id="displayMode">
+                                <option value="palimpsest">Palimpsest</option>
+                                <option value="grid">Grid</option>
+                            </select>
+                        </div>
+                        <div class="option">
+                            <label for="layerOrder">Layer Order:</label>
+                            <select id="layerOrder">
+                                <option value="oldestOnTop">Oldest on top</option>
+                                <option value="newestOnTop">Newest on top</option>
+                                <option value="random">Random</option>
+                            </select>
+                        </div>
+                        <div class="option">
+                            <label for="artifactWeight">Artifact Selection Weight: <span class="weight-data" id="weightRatio">50/50</span></label>
+                            <input type="range" id="artifactWeight" min="0" max="100" value="50">
+                            <div class="weight-labels">
+                                <span>Images</span>
+                                <span>Text</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="options-column">
-                    <h3>Entry Header Options</h3>
-                    <div class="option">
-                        <label for="displayHeader">Display Header:</label>
-                        <label class="switch">
-                            <input type="checkbox" id="displayHeader" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <br>
-                    <div class="option">
-                        <label for="urlColor">URL Color:</label>
-                        <input type="color" id="urlColor" value="#FF0000">
-                    </div>
-                    <div class="option">
-                        <label for="urlBackgroundColor">URL Background Color:</label>
-                        <input type="color" id="urlBackgroundColor" value="#FFFFFF">
-                    </div>
-                    <div class="option">
-                        <label for="displayEntryNumber">Display Entry Number:</label>
-                        <label class="switch">
-                            <input type="checkbox" id="displayEntryNumber">
-                            <span class="slider"></span>
-                        </label>
+            </div>
+
+            <h2>Example Entries</h2>
+            <div class="example-entries">
+                <div class="entry-container">
+                    <div class="entry" id="textEntry">
+                        <a href="#" class="entry-url">example-1.com</a>
+                        <div class="entry-content">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="options-column">
-                    <h3>Page Options</h3>
-                    <div class="option">
-                        <label for="pageBackgroundColor">Page Background Color:</label>
-                        <input type="color" id="pageBackgroundColor" value="#FFFFFF">
-                    </div>
-                    <div class="option">
-                        <label for="displayMode">Display Mode:</label>
-                        <select id="displayMode">
-                            <option value="palimpsest">Palimpsest</option>
-                            <option value="grid">Grid</option>
-                        </select>
-                    </div>
-                    <div class="option">
-                        <label for="layerOrder">Layer Order:</label>
-                        <select id="layerOrder">
-                            <option value="oldestOnTop">Oldest on top</option>
-                            <option value="newestOnTop">Newest on top</option>
-                            <option value="random">Random</option>
-                        </select>
-                    </div>
-                    <div class="option">
-                        <label for="artifactWeight">Artifact Selection Weight: <span class="weight-data" id="weightRatio">50/50</span></label>
-                        <input type="range" id="artifactWeight" min="0" max="100" value="50">
-                        <div class="weight-labels">
-                            <span>Images</span>
-                            <span>Text</span>
+                <div class="entry-container">
+                    <div class="entry" id="imageEntry">
+                        <a href="#" class="entry-url">example-2.com</a>
+                        <div class="entry-content">
+                            <img src="../images/example-image.jpg" alt="Example Image">
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <h2>Example Entries</h2>
-        <div class="example-entries">
-            <div class="entry-container">
-                <div class="entry" id="textEntry">
-                    <a href="#" class="entry-url">example-1.com</a>
-                    <div class="entry-content">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                    </div>
-                </div>
+        <div class="banned-websites">
+            <div class="banned-header">
+                <h2>Banned Websites</h2>
+                <button id="addBannedWebsite">Add</button>
             </div>
-            <div class="entry-container">
-                <div class="entry" id="imageEntry">
-                    <a href="#" class="entry-url">example-2.com</a>
-                    <div class="entry-content">
-                        <img src="../images/example-image.jpg" alt="Example Image">
-                    </div>
-                </div>
+            <div class="banned-list">
+                <input type="text" id="banWebsite" placeholder="  Enter website URL">
+                <ul id="bannedWebsitesList">
+                    <!-- Banned websites will be added here dynamically -->
+                </ul>
             </div>
         </div>
     </div>
