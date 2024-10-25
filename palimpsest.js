@@ -17,7 +17,6 @@ function getRandomContent() {
             // Check if the current URL is in the banned list
             const isBanned = bannedWebsites.some(bannedUrl => {
                 const isMatch = currentUrl.includes(bannedUrl);
-                console.log(`Comparing ${currentUrl} with ${bannedUrl}: ${isMatch}`);
                 return isMatch;
             });
 
