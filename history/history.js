@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 fadeIn.remove();
                 console.log('Fade-in element removed');
-            }, 550); // 550 milliseconds = 0.55 seconds
+            }, 1000); // 1 second
         } else {
             console.log('Fade-in element not found');
         }

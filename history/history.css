@@ -62,10 +62,6 @@
     border-radius: var(--entry-border-radius) var(--entry-border-radius) var(--entry-border-radius) var(--entry-border-radius) !important;
 }
 
-.grid-mode .entry-hover {
-    transform: scale(1.1);
-}
-
 /* Styles for the URL element within each entry */
 .entry-url {
     color: var(--url-color);
@@ -142,7 +138,7 @@
     left: 0;
     z-index: 10000;
     display: block;
-    transition: all 0.5s ease;
+    transition: all 1s ease;
 }
 
 /* Media query for responsive design */
