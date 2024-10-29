@@ -5,20 +5,31 @@ function isElementVisible(element) {
     return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
 }
 
+    // Helper function to clean up URLs for display
+    function tidyUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            let domain = urlObj.hostname.replace(/^www\./, '');
+            const parts = domain.split('.');
+            return parts.length > 2 ? parts.slice(-2).join('.') : domain;
+        } catch (e) {
+            return url;
+        }
+    }
+
 function getRandomContent() {
     return new Promise((resolve) => {
-        // First, get the current URL
-        const currentUrl = window.location.hostname;
+        const currentUrl = window.location.href;
+        const currentTidyUrl = tidyUrl(currentUrl);
 
-        // Then, check if the current URL is in the banned list
-        chrome.storage.local.get(['bannedWebsites', 'artifactWeight'], (result) => {
+        chrome.storage.local.get(['bannedWebsites', 'artifactWeight', 'uniqueWebsites', 'visitedUrls'], (result) => {
             const bannedWebsites = result.bannedWebsites || [];
+            const uniqueWebsites = result.uniqueWebsites || false;
             
             // Check if the current URL is in the banned list
-            const isBanned = bannedWebsites.some(bannedUrl => {
-                const isMatch = currentUrl.includes(bannedUrl);
-                return isMatch;
-            });
+            const isBanned = bannedWebsites.some(bannedUrl => 
+                currentTidyUrl.includes(bannedUrl)
+            );
 
             if (isBanned) {
                 console.log('Current website is in the banned list. Skipping content selection.');
@@ -26,10 +37,34 @@ function getRandomContent() {
                 return;
             }
 
-            // If the website is not banned, proceed with the original logic
+            // If unique websites is enabled, check for existing entries
+            if (uniqueWebsites && result.visitedUrls) {
+                const existingEntryIndex = result.visitedUrls.findIndex(entry => {
+                    try {
+                        const entryTidyUrl = tidyUrl(entry.url);
+                        return entryTidyUrl === currentTidyUrl;
+                    } catch (e) {
+                        console.log('Error comparing URLs:', e);
+                        return false;
+                    }
+                });
+
+                if (existingEntryIndex !== -1) {
+                    console.log('Found existing entry for this domain. Updating...');
+                    // Remove the existing entry
+                    const updatedUrls = [...result.visitedUrls];
+                    updatedUrls.splice(existingEntryIndex, 1);
+                    chrome.storage.local.set({ visitedUrls: updatedUrls }, () => {
+                        console.log('Removed existing entry for domain:', currentTidyUrl);
+                    });
+                }
+            }
+
+            // Proceed with content selection
             const artifactWeight = result.artifactWeight !== undefined ? result.artifactWeight : 50;
             const imageThreshold = (100 - artifactWeight) / 100;
             
+            let content;
             if (Math.random() < imageThreshold) {
                 content = getRandomImage();
                 if (content.content === "No suitable image found on this page." && imageThreshold === 0) {
@@ -135,9 +170,10 @@ function getRandomImage() {
 //save data to chrome storage
 function saveData(url, content) {
     console.log('Saving data:', { url, content });
-    chrome.storage.local.get(['visitedUrls', 'maxUrls'], (result) => {
+    chrome.storage.local.get(['visitedUrls', 'maxUrls', 'uniqueWebsites'], (result) => {
         let urls = result.visitedUrls || [];
         const maxUrls = result.maxUrls || 100;
+        const uniqueWebsites = result.uniqueWebsites || false;
         
         const position = {
             x: Math.random() * 90,
@@ -156,6 +192,8 @@ function saveData(url, content) {
         
         console.log('New entry being saved:', newEntry);
         
+        // If unique websites is enabled, we've already removed the old entry
+        // so we just need to add the new one
         urls.push(newEntry);
         
         if (urls.length > maxUrls) {

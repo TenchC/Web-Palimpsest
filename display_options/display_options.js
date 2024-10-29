@@ -13,12 +13,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const weightRatioSpan = document.getElementById('weightRatio');
     const displayModeSelect = document.getElementById('displayMode');
     const displayHeaderInput = document.getElementById('displayHeader');
-
-    // New code for banned websites functionality
     const addBannedWebsiteButton = document.getElementById('addBannedWebsite');
     const banWebsiteInput = document.getElementById('banWebsite');
     const bannedWebsitesList = document.getElementById('bannedWebsitesList');
+    const uniqueWebsitesInput = document.getElementById('uniqueWebsites');
 
+
+        // Add this function with the other functions
+        function removeFadeIn() {
+            const fadeIn = document.getElementById('fade-in');
+            if (fadeIn) {
+                fadeIn.style.opacity = 0;
+                setTimeout(() => {
+                    fadeIn.remove();
+                    console.log('Fade-in element removed');
+                }, 1000); // 1 second
+            } else {
+                console.log('Fade-in element not found');
+            }
+        }
+        removeFadeIn();
     // Function to update example entries with current settings
     function updateExampleEntries() {
         // Get current values
@@ -83,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateBorderRadiusValue() {
         borderRadiusValueSpan.textContent = entryBorderRadiusInput.value;
     }
-
+    
     // Add event listeners to inputs
     [urlColorInput, urlBackgroundColorInput, pageBackgroundColorInput].forEach(input => {
         if (input) {
@@ -117,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const artifactWeight = parseInt(artifactWeightInput.value);
         const displayMode = displayModeSelect.value;
         const displayHeader = displayHeaderInput.checked;
+        const uniqueWebsites = uniqueWebsitesInput.checked;
 
         // Create options object
         const options = {
@@ -128,7 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
             displayEntryNumber: displayEntryNumber,
             artifactWeight: artifactWeight,
             displayMode: displayMode,
-            displayHeader: displayHeader
+            displayHeader: displayHeader,
+            uniqueWebsites: uniqueWebsites
         };
 
         // Save options to chrome storage
@@ -139,7 +155,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Load saved options when the page loads
-    chrome.storage.local.get(['pageBackgroundColor', 'urlColor', 'urlBackgroundColor', 'entryBorderRadius', 'layerOrder', 'displayEntryNumber', 'artifactWeight', 'displayMode', 'displayHeader'], function(items) {
+    chrome.storage.local.get([
+        'pageBackgroundColor', 
+        'urlColor', 
+        'urlBackgroundColor', 
+        'entryBorderRadius', 
+        'layerOrder', 
+        'displayEntryNumber', 
+        'artifactWeight', 
+        'displayMode', 
+        'displayHeader',
+        'uniqueWebsites'
+    ], function(items) {
         // Set input values based on saved options
         if (items.pageBackgroundColor) {
             pageBackgroundColorInput.value = items.pageBackgroundColor;
@@ -171,7 +198,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Set default value to true if not set
             displayHeaderInput.checked = true;
         }
+        if (items.uniqueWebsites !== undefined) {
+            uniqueWebsitesInput.checked = items.uniqueWebsites;
+        } else {
+            // Set default value to false if not set
+            uniqueWebsitesInput.checked = false;
+        }
         updateExampleEntries();
+        
+        // Remove fade-in after everything is loaded
+        removeFadeIn();
     });
 
 
@@ -298,4 +334,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial update of the banned websites list
     updateBannedWebsitesList();
+
+
 });
