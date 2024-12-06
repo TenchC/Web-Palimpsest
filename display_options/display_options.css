@@ -349,7 +349,7 @@ input:checked + .slider {
     padding: 3% 0;
 }
 
-/* Add these new styles */
+
 .flex-row {
     display: flex;
     gap: 15px;
